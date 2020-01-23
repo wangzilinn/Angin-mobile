@@ -1,16 +1,34 @@
 # word_front_end
 
-A new Flutter application.
+## Views
 
-## Getting Started
+1. card_list.dart
 
-This project is a starting point for a Flutter application.
+   显示今日要背的所有卡片的界面
 
-A few resources to get you started if this is your first Flutter project:
+2. settings.dart
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+   设置界面
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+3. card_detail.dart
+
+   单个卡片的显示界面
+
+4. motify.dart
+
+   修改卡片的界面
+
+## Models
+
+卡片数据
+
+显示全部卡片简要信息
+
+储存设置的内容
+
+## Services
+
+从网站获取restful消息的服务
+
+
+
