@@ -70,7 +70,7 @@ class CardDetailView extends StatelessWidget {
 
   List<Widget> _buildOptionButton(){
     var buttonList = List<Widget>();
-    var options = ["状态1", "状态2", "状态3", "状态3"];
+    var options = ["状态1", "状态2", "状态3", "状态4"];
     for (String item in options){
       buttonList.add(FlatButton(color: Colors.blue,child: Text(item),onPressed: _pressOptionsButton,));
     }
