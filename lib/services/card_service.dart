@@ -1,0 +1,3 @@
+class CardService{
+//  static const
+}
