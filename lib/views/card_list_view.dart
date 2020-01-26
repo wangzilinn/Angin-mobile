@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:word_front_end/services/card_service.dart';
 import 'package:word_front_end/views/card_detail_view.dart';
 import 'package:word_front_end/views/settings_view.dart';
 
-class CardListView extends StatelessWidget {
+class CardListView extends StatefulWidget {
+  @override
+  _CardListViewState createState() => _CardListViewState();
+}
+
+class _CardListViewState extends State<CardListView> {
+//  CardService get service => GetIt.I<CardService>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
