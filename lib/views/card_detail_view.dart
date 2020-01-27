@@ -1,7 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:word_front_end/models/displayed_card_model.dart';
 
-class CardDetailView extends StatelessWidget {
-  String _innerTxt = "单词显示内容";
+class CardDetailView extends StatefulWidget {
+  DisplayedCardModel _displayedCardModel;
+
+  CardDetailView(this._displayedCardModel);
+
+  @override
+  _CardDetailViewState createState() => _CardDetailViewState();
+}
+
+class _CardDetailViewState extends State<CardDetailView> {
+  DisplayedCardModel get displayedCard => widget._displayedCardModel;
+
+  bool _showAnswer = false;
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +34,13 @@ class CardDetailView extends StatelessWidget {
                   Container(
                       padding: const EdgeInsets.only(top: 32),
                       child: Text(
-                        "卡片正面",
+                        displayedCard.key,
                         style: TextStyle(fontWeight: FontWeight.bold),
                       )),
                   Container(
                     padding: const EdgeInsets.all(32),
                     child: Text(
-                      _innerTxt,
+                      displayedCard.front,
                       softWrap: true,
                     ),
                   )
@@ -43,39 +55,52 @@ class CardDetailView extends StatelessWidget {
                   Container(
 //          padding: const EdgeInsets.only(top: 32),
                     child: Text(
-                      "卡片背面",
+                      "答案",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                   Container(
                     padding: const EdgeInsets.all(32),
                     child: Text(
-                      _innerTxt,
+                      _showAnswer? displayedCard.back :"",
                       softWrap: true,
                     ),
                   )
                 ],
               ),
             ),
-            Row(
-              //不同状态的按钮
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children:_buildOptionButton()
-            ),
+            _showAnswer?_buildOptionButton():_buildShowAnswerButton(),
           ],
         ),
       ),
     );
   }
 
-  List<Widget> _buildOptionButton(){
+  Widget _buildOptionButton(){
     var buttonList = List<Widget>();
-    var options = ["状态1", "状态2", "状态3", "状态4"];
+    var options = displayedCard.options;
     for (String item in options){
       buttonList.add(FlatButton(color: Colors.blue,child: Text(item),onPressed: _pressOptionsButton,));
     }
-    return buttonList;
+    return Row(
+      //不同状态的按钮
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: buttonList
+    );
   }
 
-  void _pressOptionsButton() {}
+  Widget _buildShowAnswerButton() {
+    return FlatButton(color:Colors.blue, child: Text("查看答案"), onPressed: _pressShowAnswerButton,);
+  }
+
+
+  void _pressOptionsButton() {
+
+  }
+
+  void _pressShowAnswerButton() {
+    setState(() {
+      _showAnswer = true;
+    });
+  }
 }

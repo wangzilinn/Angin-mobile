@@ -3,5 +3,5 @@ class RESTResponseModel<T>{
   bool error;
   String errorMessage;
 
-  RESTResponseModel({this.data, this.error, this.errorMessage});
+  RESTResponseModel({this.data, this.error = false, this.errorMessage});
 }

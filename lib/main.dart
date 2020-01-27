@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:word_front_end/services/card_service.dart';
+import 'package:word_front_end/services/config_service.dart';
 import 'package:word_front_end/views/card_list_view.dart';
 
-void main() => runApp(MyApp());
+void setupLocator() {
+  GetIt.I.registerLazySingleton(() => CardService());
+  GetIt.I.registerLazySingleton(() => ConfigService());
+}
+
+void main() {
+  setupLocator();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "单词",
-      theme: ThemeData(primaryColor: Colors.blue),
-      home: CardListView()
-    );
+        title: "Card",
+        theme: ThemeData(primaryColor: Colors.blue),
+        home: CardListView());
   }
 }
