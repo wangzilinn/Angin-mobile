@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:word_front_end/models/displayed_card_model.dart';
+import 'package:word_front_end/services/card_service.dart';
 
 class CardDetailView extends StatefulWidget {
   DisplayedCardModel _displayedCardModel;
@@ -12,6 +14,7 @@ class CardDetailView extends StatefulWidget {
 
 class _CardDetailViewState extends State<CardDetailView> {
   DisplayedCardModel get displayedCard => widget._displayedCardModel;
+  CardService get cardService => GetIt.I<CardService>();
 
   bool _showAnswer = false;
 
@@ -80,7 +83,7 @@ class _CardDetailViewState extends State<CardDetailView> {
     var buttonList = List<Widget>();
     var options = displayedCard.options;
     for (String item in options){
-      buttonList.add(FlatButton(color: Colors.blue,child: Text(item),onPressed: _pressOptionsButton,));
+      buttonList.add(FlatButton(color: Colors.blue,child: Text(item),onPressed: () =>_pressOptionsButton(item),));
     }
     return Row(
       //不同状态的按钮
@@ -94,8 +97,8 @@ class _CardDetailViewState extends State<CardDetailView> {
   }
 
 
-  void _pressOptionsButton() {
-
+  void _pressOptionsButton(String option) {
+    cardService.updateCardStatus(displayedCard.key, option);
   }
 
   void _pressShowAnswerButton() {

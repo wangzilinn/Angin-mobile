@@ -1,20 +1,33 @@
-import 'package:word_front_end/models/settings_model.dart';
+import 'package:word_front_end/models/local_status_model.dart';
 
 class ConfigService {
-  SettingsModel _savedSettingsModel;
+  //储存所有本地配置
+  LocalStatusModel _localStatusModel;
 
   ConfigService() {
     //TODO 获取本地配置
-    _savedSettingsModel =
-        new SettingsModel(maxNewCardNumber: 2, maxReciteCardNumber: 4);
+    _localStatusModel = new LocalStatusModel(maxNewCardNumber: 1, maxReciteCardNumber: 4);
   }
 
-  void updateSettings(SettingsModel settingsModel){
-    _savedSettingsModel.update(settingsModel);
+  void updateSettings(
+      {int maxReciteCardNumber,
+      int maxNewCardNumber,
+      bool alreadyFetchedTodayCardList}) {
+    if (maxReciteCardNumber != null) {
+      _localStatusModel.maxNewCardNumber = maxReciteCardNumber;
+    }
+    if (maxNewCardNumber != null) {
+      _localStatusModel.maxNewCardNumber = maxNewCardNumber;
+    }
+    if (alreadyFetchedTodayCardList != null) {
+      _localStatusModel.alreadyFetchedTodayCardList =
+          alreadyFetchedTodayCardList;
+    }
+    _saveLocalStatusModel();
   }
+  LocalStatusModel get settings => _localStatusModel;
 
-  SettingsModel get savedSettings => _savedSettingsModel;
-
-  int get maxReciteCardNumber => _savedSettingsModel.maxReciteCardNumber;
-  int get maxNewCardNumber => _savedSettingsModel.maxNewCardNumber;
+  void _saveLocalStatusModel(){
+    //TODO 将配置保存到本地
+  }
 }
