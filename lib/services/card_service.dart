@@ -12,6 +12,9 @@ class CardService {
   static const header = {'Content-Type': "application/json"};
 
   List<DisplayedCardModel> _cardList;
+  int _currentCardIndex;
+
+  ConfigService get configService => GetIt.I<ConfigService>();
 
   Future<RESTResponseModel<List<DisplayedCardModel>>> getRemoteCardList(
       {@required int reciteCardNumber, @required int newCardNumber}) {
@@ -39,13 +42,14 @@ class CardService {
       if (data.statusCode == 200) {
         var utf8decoder = new Utf8Decoder();
         final jsonData = json.decode(utf8decoder.convert(data.bodyBytes));
-        DisplayedCardModel displayedCardModel =
-            DisplayedCardModel.fromJson(jsonData);
+        DisplayedCardModel displayedCardModel = DisplayedCardModel.fromJson(
+            jsonData,
+            deadline: configService.settings.deadline);
         //从原始列表中更新新获得的卡片的选项和过期时间.
         _cardList.firstWhere((item) {
           if (item.key == displayedCardModel.key) {
             item.options = displayedCardModel.options;
-            item.expireDate = displayedCardModel.expireDate;
+            item.expirationTime = displayedCardModel.expirationTime;
             return true;
           } else
             return false;
@@ -54,13 +58,12 @@ class CardService {
     });
   }
 
-  Future<List<DisplayedCardModel>> getTodayCardList() async {
-    var maxNewCardNumber = GetIt.I<ConfigService>().settings.maxNewCardNumber;
-    var maxReciteCardNumber =
-        GetIt.I<ConfigService>().settings.maxReciteCardNumber;
+  Future<void> downloadTodayCardList() async {
+    var maxNewCardNumber = configService.settings.maxNewCardNumber;
+    var maxReciteCardNumber = configService.settings.maxReciteCardNumber;
 
     bool alreadyFetchedTodayCardList =
-        GetIt.I<ConfigService>().settings.alreadyFetchedTodayCardList;
+        configService.settings.alreadyFetchedTodayCardList;
 
     if (!alreadyFetchedTodayCardList) {
       _cardList = await getRemoteCardList(
@@ -69,13 +72,38 @@ class CardService {
           .then((response) {
         if (!response.error) {
           //已经从服务器获取了今天的单词列表,不在从服务器重新获取
-          GetIt.I<ConfigService>().settings.alreadyFetchedTodayCardList = true;
+          configService.settings.alreadyFetchedTodayCardList = true;
           return response.data;
         } else {
           return null;
         }
       });
     }
-    return _cardList;
   }
+
+  //根据index获得卡片详情
+  DisplayedCardModel getCard(int index) {
+    _currentCardIndex = index;
+    return _cardList[index];
+  }
+
+  //获得下一个卡片详情
+  DisplayedCardModel next() {
+    _currentCardIndex++;
+    //如果到底了,则从头开始
+    if (_currentCardIndex >= _cardList.length) _currentCardIndex = 0;
+    if (_cardList.length == 0)
+      return null;
+    else
+      return _cardList[_currentCardIndex];
+  }
+
+  bool get hasDownloadCardList{
+    if(_cardList != null)
+      return true;
+    else
+      return false;
+  }
+
+  int get listLength => _cardList.length;
 }

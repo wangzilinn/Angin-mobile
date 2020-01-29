@@ -14,6 +14,10 @@ class CardDetailView extends StatefulWidget {
 
 class _CardDetailViewState extends State<CardDetailView> {
   DisplayedCardModel get displayedCard => widget._displayedCardModel;
+
+  set displayedCard(DisplayedCardModel displayedCardModel) =>
+      widget._displayedCardModel = displayedCardModel;
+
   CardService get cardService => GetIt.I<CardService>();
 
   bool _showAnswer = false;
@@ -22,9 +26,7 @@ class _CardDetailViewState extends State<CardDetailView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "detail"
-        ),
+        title: Text("detail"),
       ),
       body: Container(
         child: Column(
@@ -65,40 +67,50 @@ class _CardDetailViewState extends State<CardDetailView> {
                   Container(
                     padding: const EdgeInsets.all(32),
                     child: Text(
-                      _showAnswer? displayedCard.back :"",
+                      _showAnswer ? displayedCard.back : "",
                       softWrap: true,
                     ),
                   )
                 ],
               ),
             ),
-            _showAnswer?_buildOptionButton():_buildShowAnswerButton(),
+            _showAnswer ? _buildOptionButton() : _buildShowAnswerButton(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildOptionButton(){
+  Widget _buildOptionButton() {
     var buttonList = List<Widget>();
     var options = displayedCard.options;
-    for (String item in options){
-      buttonList.add(FlatButton(color: Colors.blue,child: Text(item),onPressed: () =>_pressOptionsButton(item),));
+    for (String item in options) {
+      buttonList.add(FlatButton(
+        color: Colors.blue,
+        child: Text(item),
+        onPressed: () => _pressOptionsButton(item),
+      ));
     }
     return Row(
-      //不同状态的按钮
+        //不同状态的按钮
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: buttonList
-    );
+        children: buttonList);
   }
 
   Widget _buildShowAnswerButton() {
-    return FlatButton(color:Colors.blue, child: Text("查看答案"), onPressed: _pressShowAnswerButton,);
+    return FlatButton(
+      color: Colors.blue,
+      child: Text("查看答案"),
+      onPressed: _pressShowAnswerButton,
+    );
   }
-
 
   void _pressOptionsButton(String option) {
     cardService.updateCardStatus(displayedCard.key, option);
+    displayedCard = cardService.next();
+    setState(() {
+      _showAnswer = false;
+    });
   }
 
   void _pressShowAnswerButton() {

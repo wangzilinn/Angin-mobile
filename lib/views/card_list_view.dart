@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:word_front_end/models/displayed_card_model.dart';
 import 'package:word_front_end/services/card_service.dart';
 import 'package:word_front_end/services/config_service.dart';
 import 'package:word_front_end/views/card_detail_view.dart';
@@ -16,7 +15,6 @@ class _CardListViewState extends State<CardListView> {
 
   ConfigService get configService => GetIt.I<ConfigService>();
 
-  List<DisplayedCardModel> _cardList;
   bool _isLoading = false;
 
   @override
@@ -48,21 +46,21 @@ class _CardListViewState extends State<CardListView> {
               return CircularProgressIndicator();
             }
 
-            if (_cardList == null) {
+            if (!cardService.hasDownloadCardList) {
               return Center(
-                child: Text("从服务器获取数据失败"),
+                child: Text("从服务器获取卡片数据失败"),
               );
             }
             return ListView.separated(
                 itemBuilder: (_, index) {
                   return ListTile(
-                    title: Text(_cardList[index].key,
+                    title: Text(cardService.getCard(index).key,
                         style: TextStyle(color: Theme.of(context).primaryColor)),
-                    subtitle: Text(_cardList[index].expireDate),
+                    subtitle: Text(cardService.getCard(index).expirationTime.toIso8601String()),
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (_) =>
-                              CardDetailView(_cardList[index])));
+                              CardDetailView(cardService.getCard(index))));
                     },
                   );
                 },
@@ -72,7 +70,7 @@ class _CardListViewState extends State<CardListView> {
                     color: Colors.green,
                   );
                 },
-                itemCount: _cardList.length);
+                itemCount: cardService.listLength);
           },
         ),
       ),
@@ -84,7 +82,7 @@ class _CardListViewState extends State<CardListView> {
       _isLoading = true;
     });
 
-    _cardList = await cardService.getTodayCardList();
+    await cardService.downloadTodayCardList();
 
     setState(() {
       _isLoading = false;
