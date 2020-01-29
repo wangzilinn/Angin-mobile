@@ -2,7 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
-import 'package:word_front_end/models/displayed_card_model.dart';
+import 'package:word_front_end/models/card_detail_model.dart';
+import 'package:word_front_end/models/card_title_model.dart';
 import 'package:word_front_end/models/rest_response_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:word_front_end/services/config_service.dart';
@@ -11,27 +12,27 @@ class CardService {
   static const API = "http://47.103.194.29:8080/";
   static const header = {'Content-Type': "application/json"};
 
-  List<DisplayedCardModel> _cardList;
+  List<CardDetailModel> _cardList;
   int _currentCardIndex;
 
   ConfigService get configService => GetIt.I<ConfigService>();
 
-  Future<RESTResponseModel<List<DisplayedCardModel>>> getRemoteCardList(
+  Future<RESTResponseModel<List<CardDetailModel>>> getRemoteCardList(
       {@required int reciteCardNumber, @required int newCardNumber}) {
     String url = API + "/getTodayCards/$reciteCardNumber/$newCardNumber";
     return http.get(url, headers: header).then((data) {
       if (data.statusCode == 200) {
         var utf8decoder = new Utf8Decoder();
         final jsonData = json.decode(utf8decoder.convert(data.bodyBytes));
-        final cards = <DisplayedCardModel>[];
+        final cards = <CardDetailModel>[];
         for (var item in jsonData) {
-          DisplayedCardModel displayedCardModel =
-              DisplayedCardModel.fromJson(item);
+          CardDetailModel displayedCardModel =
+              CardDetailModel.fromJson(item);
           cards.add(displayedCardModel);
         }
-        return RESTResponseModel<List<DisplayedCardModel>>(data: cards);
+        return RESTResponseModel<List<CardDetailModel>>(data: cards);
       }
-      return RESTResponseModel<List<DisplayedCardModel>>(
+      return RESTResponseModel<List<CardDetailModel>>(
           error: true, errorMessage: "An error occrooed");
     });
   }
@@ -42,7 +43,7 @@ class CardService {
       if (data.statusCode == 200) {
         var utf8decoder = new Utf8Decoder();
         final jsonData = json.decode(utf8decoder.convert(data.bodyBytes));
-        DisplayedCardModel displayedCardModel = DisplayedCardModel.fromJson(
+        CardDetailModel displayedCardModel = CardDetailModel.fromJson(
             jsonData,
             deadline: configService.settings.deadline);
         //从原始列表中更新新获得的卡片的选项和过期时间.
@@ -81,14 +82,18 @@ class CardService {
     }
   }
 
-  //根据index获得卡片详情
-  DisplayedCardModel getCard(int index) {
+  //根据index获得卡片详情,并记录是从哪里点进去的
+  CardDetailModel getCardDetail(int index) {
     _currentCardIndex = index;
     return _cardList[index];
   }
 
+  CardTitleModel getCardTitle(int index){
+    return new CardTitleModel.fromDetail(_cardList[index]);
+  }
+
   //获得下一个卡片详情
-  DisplayedCardModel next() {
+  CardDetailModel next() {
     _currentCardIndex++;
     //如果到底了,则从头开始
     if (_currentCardIndex >= _cardList.length) _currentCardIndex = 0;

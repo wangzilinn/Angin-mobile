@@ -6,6 +6,7 @@ class LocalStatusModel{
 
   LocalStatusModel({this.maxReciteCardNumber, this.maxNewCardNumber}){
     alreadyFetchedTodayCardList = false;
+    _deadline = DateTime(1996,11,12,18,0,0,0);
   }
 
   //获得今日的过期时间,因为可能是之前天数设置的,所以要转换为今天的日子

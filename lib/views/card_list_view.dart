@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:word_front_end/models/card_title_model.dart';
 import 'package:word_front_end/services/card_service.dart';
 import 'package:word_front_end/services/config_service.dart';
 import 'package:word_front_end/views/card_detail_view.dart';
@@ -12,7 +13,6 @@ class CardListView extends StatefulWidget {
 
 class _CardListViewState extends State<CardListView> {
   CardService get cardService => GetIt.I<CardService>();
-
   ConfigService get configService => GetIt.I<ConfigService>();
 
   bool _isLoading = false;
@@ -50,17 +50,21 @@ class _CardListViewState extends State<CardListView> {
               return Center(
                 child: Text("从服务器获取卡片数据失败"),
               );
+            }else{
+
             }
+
             return ListView.separated(
                 itemBuilder: (_, index) {
+                  CardTitleModel cardTitle = cardService.getCardTitle(index);
                   return ListTile(
-                    title: Text(cardService.getCard(index).key,
+                    title: Text(cardTitle.key,
                         style: TextStyle(color: Theme.of(context).primaryColor)),
-                    subtitle: Text(cardService.getCard(index).expirationTime.toIso8601String()),
+                    subtitle: Text(cardTitle.expirationTime),
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (_) =>
-                              CardDetailView(cardService.getCard(index))));
+                              CardDetailView(cardService.getCardDetail(index))));
                     },
                   );
                 },

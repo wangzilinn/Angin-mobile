@@ -1,6 +1,6 @@
 enum CardStatus { READY, SUSPEND, DONE }
 
-class DisplayedCardModel {
+class CardDetailModel {
   String key;
   String front;
   String back;
@@ -8,14 +8,14 @@ class DisplayedCardModel {
   List<String> options;
   CardStatus status;
 
-  DisplayedCardModel({this.key,
+  CardDetailModel({this.key,
     this.front,
     this.back,
     this.expirationTime,
     this.options,
     this.status});
 
-  factory DisplayedCardModel.fromJson(Map<String, dynamic> item,
+  factory CardDetailModel.fromJson(Map<String, dynamic> item,
       {DateTime deadline}) {
 
     //处理options:
@@ -39,7 +39,7 @@ class DisplayedCardModel {
       cardStatus = CardStatus.READY;
     }
 
-    return DisplayedCardModel(
+    return CardDetailModel(
         key: item['key'],
         front: item['front'],
         back: item['back'],

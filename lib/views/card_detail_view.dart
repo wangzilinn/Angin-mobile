@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:word_front_end/models/displayed_card_model.dart';
+import 'package:word_front_end/models/card_detail_model.dart';
 import 'package:word_front_end/services/card_service.dart';
 
 class CardDetailView extends StatefulWidget {
-  DisplayedCardModel _displayedCardModel;
+  CardDetailModel _displayedCardModel;
 
   CardDetailView(this._displayedCardModel);
 
@@ -13,9 +13,9 @@ class CardDetailView extends StatefulWidget {
 }
 
 class _CardDetailViewState extends State<CardDetailView> {
-  DisplayedCardModel get displayedCard => widget._displayedCardModel;
+  CardDetailModel get displayedCard => widget._displayedCardModel;
 
-  set displayedCard(DisplayedCardModel displayedCardModel) =>
+  set displayedCard(CardDetailModel displayedCardModel) =>
       widget._displayedCardModel = displayedCardModel;
 
   CardService get cardService => GetIt.I<CardService>();
