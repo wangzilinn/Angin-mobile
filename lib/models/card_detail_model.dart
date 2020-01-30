@@ -33,11 +33,11 @@ class CardDetailModel {
 
     if (deadline != null) {
       var now = DateTime.now();
-      var deaelineDateTime = DateTime(
+      var deadlineDateTime = DateTime(
           now.year, now.month, now.day, deadline.hour, deadline.minute);
       if (expirationTime.isBefore(DateTime.now()))
         cardStatus = CardStatus.READY;
-      else if (expirationTime.isBefore(deaelineDateTime))
+      else if (expirationTime.isBefore(deadlineDateTime))
         cardStatus = CardStatus.SUSPEND;
       else
         cardStatus = CardStatus.DONE;

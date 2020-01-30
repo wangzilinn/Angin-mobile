@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:word_front_end/models/card_detail_model.dart';
 import 'package:word_front_end/models/card_title_model.dart';
 import 'package:word_front_end/services/card_service.dart';
 import 'package:word_front_end/services/config_service.dart';
@@ -13,6 +14,7 @@ class CardListView extends StatefulWidget {
 
 class _CardListViewState extends State<CardListView> {
   CardService get cardService => GetIt.I<CardService>();
+
   ConfigService get configService => GetIt.I<ConfigService>();
 
   bool _isLoading = false;
@@ -55,15 +57,75 @@ class _CardListViewState extends State<CardListView> {
             return ListView.separated(
                 itemBuilder: (_, index) {
                   CardTitleModel cardTitle = cardService.getCardTitle(index);
-                  return ListTile(
-                    title: Text(cardTitle.key,
-                        style: TextStyle(fontSize:19, color: Theme.of(context).primaryColor)),
-                    subtitle: Text(cardTitle.expirationTime, style: TextStyle(fontSize: 13),),
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) =>
-                              CardDetailView(cardService.getCardDetail(index))));
+
+                  return Dismissible(
+                    key: ValueKey(cardTitle.key),
+                    direction: DismissDirection.horizontal,
+                    confirmDismiss: (direction) async {
+                      print(direction);
+                      return false;
                     },
+                    background: Container(
+                        color: Colors.red,
+                        child: Builder(
+                            builder: (_) {
+                              var leftPart = Expanded(
+                                child: Container(
+                                  color: Colors.red,
+                                  padding: EdgeInsets.only(left: 16),
+                                  child: Align(
+                                    child: Icon(
+                                      Icons.delete,
+                                      color: Colors.white,
+                                    ),
+                                    alignment: Alignment.centerLeft,
+                                  ),
+                                ),
+                              );
+
+                              var rightPart = Expanded(
+                                child: Container(
+                                  color: cardTitle.status == CardStatus.READY
+                                      ? Colors.red
+                                      : Colors.blue,
+                                  padding: EdgeInsets.only(right: 16),
+                                  child: Align(
+                                    child: Icon(
+                                      cardTitle.status == CardStatus.READY
+                                          ? Icons.delete
+                                          : Icons.details,
+                                      color: Colors.white,
+                                    ),
+                                    alignment: Alignment.centerRight,
+                                  ),
+                                ),
+                              );
+                              return Row(
+                                children: <Widget>[
+                                  leftPart,
+                                  rightPart,
+                                ],
+                              );
+                            }
+                        )),
+                    child: ListTile(
+                      title: Text(cardTitle.key,
+                          style: TextStyle(
+                              fontSize: 19,
+                              color: Theme
+                                  .of(context)
+                                  .primaryColor)),
+                      subtitle: Text(
+                        cardTitle.expirationTime,
+                        style: TextStyle(fontSize: 13),
+                      ),
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) =>
+                                CardDetailView(
+                                    cardService.getCardDetail(index))));
+                      },
+                    ),
                   );
                 },
                 separatorBuilder: (_, __) {
@@ -92,12 +154,8 @@ class _CardListViewState extends State<CardListView> {
   }
 
   //下拉刷新
-  Future<void> _onRefresh() async{
+  Future<void> _onRefresh() async {
     _fetchCards();
     print("refresh");
   }
 }
-
-
-
-

@@ -51,6 +51,7 @@ class CardService {
           if (item.key == displayedCardModel.key) {
             item.options = displayedCardModel.options;
             item.expirationTime = displayedCardModel.expirationTime;
+            item.status = displayedCardModel.status;
             return true;
           } else
             return false;

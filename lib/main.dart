@@ -6,7 +6,7 @@ import 'package:word_front_end/views/card_list_view.dart';
 
 void setupLocator() {
   GetIt.I.registerLazySingleton(() => CardService());
-  GetIt.I.registerSingleton(() => ConfigService());
+  GetIt.I.registerLazySingleton(() => ConfigService());
 }
 
 void main() {

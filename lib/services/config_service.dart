@@ -10,7 +10,7 @@ class ConfigService {
     _localStatusModel = new LocalStatusModel(
         maxNewCardNumber: 1,
         maxReciteCardNumber: 4,
-        deadline: TimeOfDay(hour: 18),
+        deadline: TimeOfDay(hour: 24, minute: 0),
         alreadyFetchedTodayCardList: false);
   }
 
