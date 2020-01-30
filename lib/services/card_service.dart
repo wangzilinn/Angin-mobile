@@ -7,6 +7,7 @@ import 'package:word_front_end/models/card_title_model.dart';
 import 'package:word_front_end/models/rest_response_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:word_front_end/services/config_service.dart';
+import 'package:word_front_end/views/card_delete_view.dart';
 
 class CardService {
   static const API = "http://47.103.194.29:8080/";
@@ -112,4 +113,11 @@ class CardService {
   }
 
   int get listLength => _cardList.length;
+
+  void deleteOneCard(int index, DeleteOption deleteOption) {
+    _cardList.removeAt(index);
+    if (deleteOption == DeleteOption.Permanently){
+      //TODO:从服务器删除卡片
+    }
+  }
 }
