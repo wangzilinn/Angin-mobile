@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 import 'card_detail_model.dart';
 
 class CardTitleModel {
@@ -18,6 +20,6 @@ class CardTitleModel {
   }
 
   String get expirationTime {
-    return '过期时间:${_expirationTime.year}-${_expirationTime.month}-${_expirationTime.day} ${_expirationTime.hour}:${_expirationTime.minute}:${_expirationTime.second}';
+    return '过期时间:${DateFormat('yyyy-MM-dd HH:mm:ss').format(_expirationTime)}';
   }
 }

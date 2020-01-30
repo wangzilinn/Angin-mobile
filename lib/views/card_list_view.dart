@@ -57,8 +57,8 @@ class _CardListViewState extends State<CardListView> {
                   CardTitleModel cardTitle = cardService.getCardTitle(index);
                   return ListTile(
                     title: Text(cardTitle.key,
-                        style: TextStyle(color: Theme.of(context).primaryColor)),
-                    subtitle: Text(cardTitle.expirationTime),
+                        style: TextStyle(fontSize:19, color: Theme.of(context).primaryColor)),
+                    subtitle: Text(cardTitle.expirationTime, style: TextStyle(fontSize: 13),),
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (_) =>
