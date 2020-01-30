@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:word_front_end/models/local_status_model.dart';
 
 class ConfigService {
@@ -6,13 +7,18 @@ class ConfigService {
 
   ConfigService() {
     //TODO 获取本地配置
-    _localStatusModel = new LocalStatusModel(maxNewCardNumber: 1, maxReciteCardNumber: 4);
+    _localStatusModel = new LocalStatusModel(
+        maxNewCardNumber: 1,
+        maxReciteCardNumber: 4,
+        deadline: TimeOfDay(hour: 18),
+        alreadyFetchedTodayCardList: false);
   }
 
   void updateSettings(
       {int maxReciteCardNumber,
       int maxNewCardNumber,
-      bool alreadyFetchedTodayCardList}) {
+      bool alreadyFetchedTodayCardList,
+      TimeOfDay deadline}) {
     if (maxReciteCardNumber != null) {
       _localStatusModel.maxNewCardNumber = maxReciteCardNumber;
     }
@@ -23,11 +29,15 @@ class ConfigService {
       _localStatusModel.alreadyFetchedTodayCardList =
           alreadyFetchedTodayCardList;
     }
+    if (deadline != null) {
+      _localStatusModel.deadline = deadline;
+    }
     _saveLocalStatusModel();
   }
+
   LocalStatusModel get settings => _localStatusModel;
 
-  void _saveLocalStatusModel(){
+  void _saveLocalStatusModel() {
     //TODO 将配置保存到本地
   }
 }

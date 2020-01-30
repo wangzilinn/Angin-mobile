@@ -34,29 +34,48 @@ class _SettingsViewState extends State<SettingsView> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: <Widget>[
-            Text("以下两个设置第二天才生效", style: TextStyle(
-              fontSize: 15,
-            ),),
-            TextField(
-              decoration: InputDecoration(
-                labelText: "每日最大复习单词数量",
-              ),
-              keyboardType: TextInputType.number,
-              controller: _maxReciteCardNumberController,
-              onChanged: (data){
-                _updateMaxReciteCardNumber(int.parse(data));
-              }
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    "卡片设置:",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ],
             ),
+            TextField(
+                decoration: InputDecoration(
+                  labelText: "每日最大复习单词数量",
+                ),
+                keyboardType: TextInputType.number,
+                controller: _maxReciteCardNumberController,
+                onChanged: (data) {
+                  _updateMaxReciteCardNumber(int.parse(data));
+                }),
             TextField(
               decoration: InputDecoration(
                 labelText: "每日最大新单词数量",
               ),
               keyboardType: TextInputType.number,
               controller: _maxNewCardNumberController,
-              onChanged: (data){
+              onChanged: (data) {
                 _updateMaxNewCardNumber(int.parse(data));
               },
             ),
+            Row(
+              children: <Widget>[
+                Expanded(child: Text("设置当日截至时间")),
+                RaisedButton(
+                  child: Text("选择时间"),
+                  onPressed: () => _showDeadlineTimePicker(),
+                ),
+              ],
+            ),
+            Divider(thickness: 2, height: 40, color: Colors.blue),
           ],
         ),
       ),
@@ -67,8 +86,13 @@ class _SettingsViewState extends State<SettingsView> {
     configService.updateSettings(maxReciteCardNumber: newValue);
   }
 
-  void _updateMaxNewCardNumber(int newValue){
+  void _updateMaxNewCardNumber(int newValue) {
     configService.updateSettings(maxNewCardNumber: newValue);
   }
 
+  void _showDeadlineTimePicker() async {
+    var deadline =
+        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    configService.updateSettings(deadline: deadline);
+  }
 }

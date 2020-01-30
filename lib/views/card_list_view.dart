@@ -50,8 +50,6 @@ class _CardListViewState extends State<CardListView> {
               return Center(
                 child: Text("从服务器获取卡片数据失败"),
               );
-            }else{
-
             }
 
             return ListView.separated(
