@@ -48,6 +48,7 @@ class CardService {
             jsonData,
             deadline: configService.settings.deadline);
         //从原始列表中更新新获得的卡片的选项和过期时间.
+        //TODO: _currentCardIndex用这个
         _cardList.firstWhere((item) {
           if (item.key == displayedCardModel.key) {
             item.options = displayedCardModel.options;
@@ -119,5 +120,9 @@ class CardService {
     if (deleteOption == DeleteOption.Permanently){
       //TODO:从服务器删除卡片
     }
+  }
+
+  void updateCardDetails(CardDetailModel cardDetailModel) {
+    //TODO:从服务器更新卡片细节
   }
 }

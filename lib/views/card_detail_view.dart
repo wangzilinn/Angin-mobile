@@ -26,57 +26,56 @@ class _CardDetailViewState extends State<CardDetailView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("detail"),
+        title: Text("Detail"),
       ),
-      body: Container(
-        child: Column(
-          children: [
-            Expanded(
-              //纵向延伸空间直到填满,flex是不同的权重
-              flex: 4,
-              child: Column(
-                children: <Widget>[
-                  Container(
-                      padding: const EdgeInsets.only(top: 32),
-                      child: Text(
-                        displayedCard.key,
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      )),
-                  Container(
-                    padding: const EdgeInsets.all(32),
+      body: Column(
+        children: [
+          Expanded(
+            //纵向延伸空间直到填满,flex是不同的权重
+            flex: 4,
+            child: Column(
+              children: <Widget>[
+                Container(
+                    padding: const EdgeInsets.only(top: 32),
                     child: Text(
-                      displayedCard.front,
-                      softWrap: true,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Expanded(
-              //纵向延伸空间直到填满
-              flex: 4,
-              child: Column(
-                children: <Widget>[
-                  Container(
-//          padding: const EdgeInsets.only(top: 32),
-                    child: Text(
-                      "答案",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                      displayedCard.key,
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    )),
+                Container(
+                  padding: const EdgeInsets.all(32),
+                  child: Text(
+                    displayedCard.front,
+                    softWrap: true,
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(32),
-                    child: Text(
-                      _showAnswer ? displayedCard.back : "",
-                      softWrap: true,
-                    ),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
-            _showAnswer ? _buildOptionButton() : _buildShowAnswerButton(),
-          ],
-        ),
+          ),
+          Expanded(
+            //纵向延伸空间直到填满
+            flex: 4,
+            child: Column(
+              children: <Widget>[
+                Container(
+//          padding: const EdgeInsets.only(top: 32),
+                  child: Text(
+                    "答案",
+                    style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(32),
+                  child: Text(
+                    _showAnswer ? displayedCard.back : "",
+                    softWrap: true,
+                  ),
+                )
+              ],
+            ),
+          ),
+          _showAnswer ? _buildOptionButton() : _buildShowAnswerButton(),
+        ],
       ),
     );
   }

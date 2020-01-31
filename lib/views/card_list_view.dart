@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:word_front_end/models/card_detail_model.dart';
 import 'package:word_front_end/models/card_title_model.dart';
@@ -6,6 +7,7 @@ import 'package:word_front_end/services/card_service.dart';
 import 'package:word_front_end/services/config_service.dart';
 import 'package:word_front_end/views/card_delete_view.dart';
 import 'package:word_front_end/views/card_detail_view.dart';
+import 'package:word_front_end/views/card_edit_view.dart';
 import 'package:word_front_end/views/settings_view.dart';
 
 class CardListView extends StatefulWidget {
@@ -30,7 +32,7 @@ class _CardListViewState extends State<CardListView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("today cards"),
+        title: Text("Today's cards"),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.menu),
@@ -64,44 +66,34 @@ class _CardListViewState extends State<CardListView> {
                     confirmDismiss: (direction) =>
                         _confirmDismiss(direction, index),
                     background: Container(
-                        color: Colors.red,
                         child: Builder(builder: (_) {
-                          var leftPart = Expanded(
-                            child: Container(
-                              color: Colors.red,
-                              padding: EdgeInsets.only(left: 16),
-                              child: Align(
-                                child: Icon(
-                                  Icons.delete,
-                                  color: Colors.white,
+                          return Container(
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                              colors: [Colors.blue, Colors.red],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            )),
+                            padding: EdgeInsets.only(left:16, right: 16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Align(
+                                  child: Icon(
+                                    Icons.details,
+                                    color: Colors.white,
+                                  ),
+                                  alignment: Alignment.centerLeft,
                                 ),
-                                alignment: Alignment.centerLeft,
-                              ),
-                            ),
-                          );
-
-                          var rightPart = Expanded(
-                            child: Container(
-                              color: cardTitle.status == CardStatus.READY
-                                  ? Colors.red
-                                  : Colors.blue,
-                              padding: EdgeInsets.only(right: 16),
-                              child: Align(
-                                child: Icon(
-                                  cardTitle.status == CardStatus.READY
-                                      ? Icons.delete
-                                      : Icons.details,
-                                  color: Colors.white,
+                                Align(
+                                  child: Icon(
+                                    Icons.delete,
+                                    color: Colors.white,
+                                  ),
+                                  alignment: Alignment.centerRight,
                                 ),
-                                alignment: Alignment.centerRight,
-                              ),
+                              ],
                             ),
-                          );
-                          return Row(
-                            children: <Widget>[
-                              leftPart,
-                              rightPart,
-                            ],
                           );
                         })),
                     child: ListTile(
@@ -116,10 +108,20 @@ class _CardListViewState extends State<CardListView> {
                         style: TextStyle(fontSize: 13),
                       ),
                       onTap: () {
+
                         if (cardTitle.status == CardStatus.READY) {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (_) => CardDetailView(
                                   cardService.getCardDetail(index))));
+                        }else{
+                          Fluttertoast.showToast(
+                              msg: "Done",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 12.0
+                          );
                         }
                       },
                     ),
@@ -159,7 +161,8 @@ class _CardListViewState extends State<CardListView> {
   Future<bool> _confirmDismiss(DismissDirection direction, int index) async {
     bool result;
     switch (direction) {
-      case DismissDirection.startToEnd:
+      case DismissDirection.endToStart:
+        print("从右往左滑");
         final deleteOption = await showDialog(
             context: context, builder: (_) => CardDeleteView());
         switch (deleteOption) {
@@ -173,9 +176,11 @@ class _CardListViewState extends State<CardListView> {
             result = true;
         }
         break;
-      case DismissDirection.endToStart:
-        print("从右往左滑");
+      case DismissDirection.startToEnd:
+        print("从左往右滑");
         //TODO:进入查看+编辑界面
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => CardEditView(cardService.getCardDetail(index))));
         result = false;
         break;
       default:
