@@ -105,7 +105,7 @@ class _CardDetailViewState extends State<CardDetailView> {
   }
 
   void _pressOptionsButton(String option) {
-    cardService.updateCardStatus(displayedCard.key, option);
+    cardService.updateDBCardStatus(displayedCard.key, option);
     displayedCard = cardService.next();
     setState(() {
       _showAnswer = false;

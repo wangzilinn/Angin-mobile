@@ -54,4 +54,11 @@ class CardDetailModel {
         options: options,
         status: cardStatus);
   }
+
+  Map<String, dynamic> get toJson =>{
+    "key":key,
+    "front":front,
+    "back":back,
+    //这里上传到服务器只用写这么多
+  };
 }

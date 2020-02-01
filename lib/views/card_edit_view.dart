@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:word_front_end/models/card_detail_model.dart';
 import 'package:word_front_end/services/card_service.dart';
-import 'package:word_front_end/views/card_delete_view.dart';
 
 class CardEditView extends StatefulWidget {
   CardDetailModel _displayedCardModel;
@@ -15,6 +14,7 @@ class CardEditView extends StatefulWidget {
 
 class _CardEditViewState extends State<CardEditView> {
   CardDetailModel get displayedCard => widget._displayedCardModel;
+
   CardService get cardService => GetIt.I<CardService>();
 
   TextEditingController _frontController = TextEditingController();
@@ -37,7 +37,8 @@ class _CardEditViewState extends State<CardEditView> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height - kToolbarHeight,
+          height: MediaQuery.of(context).size.height -
+              AppBar().preferredSize.height,
           child: Column(
             children: <Widget>[
               Expanded(
@@ -74,7 +75,8 @@ class _CardEditViewState extends State<CardEditView> {
                     Container(
                         child: Text(
                       "Answer",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     )),
                     Container(
                       padding: const EdgeInsets.only(left: 32, right: 32),
@@ -111,6 +113,8 @@ class _CardEditViewState extends State<CardEditView> {
   }
 
   void _pressSaveButton() {
+    displayedCard.front = _frontController.text;
+    displayedCard.back = _backController.text;
     cardService.updateCardDetails(displayedCard);
   }
 }

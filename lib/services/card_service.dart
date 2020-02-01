@@ -18,7 +18,7 @@ class CardService {
 
   ConfigService get configService => GetIt.I<ConfigService>();
 
-  Future<RESTResponseModel<List<CardDetailModel>>> getRemoteCardList(
+  Future<RESTResponseModel<List<CardDetailModel>>> _getDBCardList(
       {@required int reciteCardNumber, @required int newCardNumber}) {
     String url = API + "/getTodayCards/$reciteCardNumber/$newCardNumber";
     return http.get(url, headers: header).then((data) {
@@ -27,8 +27,7 @@ class CardService {
         final jsonData = json.decode(utf8decoder.convert(data.bodyBytes));
         final cards = <CardDetailModel>[];
         for (var item in jsonData) {
-          CardDetailModel displayedCardModel =
-              CardDetailModel.fromJson(item);
+          CardDetailModel displayedCardModel = CardDetailModel.fromJson(item);
           cards.add(displayedCardModel);
         }
         return RESTResponseModel<List<CardDetailModel>>(data: cards);
@@ -38,26 +37,55 @@ class CardService {
     });
   }
 
-  Future<void> updateCardStatus(String key, String option) {
+  Future<void> updateDBCardStatus(String key, String option) {
     String url = API + "/updateCardStatus/$key/$option";
     return http.get(url, headers: header).then((data) {
       if (data.statusCode == 200) {
         var utf8decoder = new Utf8Decoder();
         final jsonData = json.decode(utf8decoder.convert(data.bodyBytes));
-        CardDetailModel displayedCardModel = CardDetailModel.fromJson(
-            jsonData,
+        CardDetailModel displayedCardModel = CardDetailModel.fromJson(jsonData,
             deadline: configService.settings.deadline);
         //从原始列表中更新新获得的卡片的选项和过期时间.
-        //TODO: _currentCardIndex用这个
-        _cardList.firstWhere((item) {
-          if (item.key == displayedCardModel.key) {
-            item.options = displayedCardModel.options;
-            item.expirationTime = displayedCardModel.expirationTime;
-            item.status = displayedCardModel.status;
-            return true;
-          } else
-            return false;
-        });
+        assert(_cardList[_currentCardIndex].key == displayedCardModel.key);
+        //判断这个卡片是不是超出了当日过期时间,超过则从列表中删除
+        if (displayedCardModel.status == CardStatus.DONE) {
+          _cardList.removeAt(_currentCardIndex);
+          _currentCardIndex--; //由于删除了当前的,所以要把指针向上移动一个,来使详情页中的下一个为没删除时的下一个
+        } else {
+          _cardList[_currentCardIndex].options = displayedCardModel.options;
+          _cardList[_currentCardIndex].expirationTime =
+              displayedCardModel.expirationTime;
+          _cardList[_currentCardIndex].status = displayedCardModel.status;
+        }
+      }
+    });
+  }
+
+  Future<void> updateCardDetails(CardDetailModel cardDetailModel) {
+    String url = API + "/updateCardDetail/${cardDetailModel.key}";
+    //先更新本地列表
+    assert(_cardList[_currentCardIndex].key == cardDetailModel.key);
+    _cardList[_currentCardIndex].front = cardDetailModel.front;
+    _cardList[_currentCardIndex].back = cardDetailModel.back;
+    //再更新数据库
+    Map<String, dynamic> cardDetailJson = cardDetailModel.toJson;
+    String body = json.encode(cardDetailJson);
+    return http.put(url, headers: header, body: body).then((data) {
+      if (data.statusCode == 200) {
+        print('update detail Successfully');
+      } else {
+        print("update detail failed");
+      }
+    });
+  }
+
+  Future<void> _deleteDBCard(String key) {
+    String url = API + "/deleteCard/$key";
+    return http.delete(url, headers: header).then((data) {
+      if (data.statusCode == 200) {
+        print('delete Successfully');
+      } else {
+        print("delete failed");
       }
     });
   }
@@ -70,7 +98,7 @@ class CardService {
         configService.settings.alreadyFetchedTodayCardList;
 
     if (!alreadyFetchedTodayCardList) {
-      _cardList = await getRemoteCardList(
+      _cardList = await _getDBCardList(
               reciteCardNumber: maxReciteCardNumber,
               newCardNumber: maxNewCardNumber)
           .then((response) {
@@ -91,7 +119,7 @@ class CardService {
     return _cardList[index];
   }
 
-  CardTitleModel getCardTitle(int index){
+  CardTitleModel getCardTitle(int index) {
     return new CardTitleModel.fromDetail(_cardList[index]);
   }
 
@@ -106,8 +134,8 @@ class CardService {
       return _cardList[_currentCardIndex];
   }
 
-  bool get hasDownloadCardList{
-    if(_cardList != null)
+  bool get hasDownloadCardList {
+    if (_cardList != null)
       return true;
     else
       return false;
@@ -117,12 +145,8 @@ class CardService {
 
   void deleteOneCard(int index, DeleteOption deleteOption) {
     _cardList.removeAt(index);
-    if (deleteOption == DeleteOption.Permanently){
-      //TODO:从服务器删除卡片
+    if (deleteOption == DeleteOption.Permanently) {
+      _deleteDBCard(_cardList[index].key);
     }
-  }
-
-  void updateCardDetails(CardDetailModel cardDetailModel) {
-    //TODO:从服务器更新卡片细节
   }
 }
