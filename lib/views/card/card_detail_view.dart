@@ -32,7 +32,7 @@ class _CardDetailViewState extends State<CardDetailView> {
         children: [
           Expanded(
             //纵向延伸空间直到填满,flex是不同的权重
-            flex: 4,
+            flex: 7,
             child: Column(
               children: <Widget>[
                 Container(
@@ -54,16 +54,16 @@ class _CardDetailViewState extends State<CardDetailView> {
           ),
           Expanded(
             //纵向延伸空间直到填满
-            flex: 4,
+            flex: 7,
             child: Column(
               children: <Widget>[
+                _showAnswer?
                 Container(
-//          padding: const EdgeInsets.only(top: 32),
                   child: Text(
                     "答案",
-                    style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                ),
+                ):Container(),
                 Container(
                   padding: const EdgeInsets.all(32),
                   child: Text(
@@ -74,33 +74,50 @@ class _CardDetailViewState extends State<CardDetailView> {
               ],
             ),
           ),
-          _showAnswer ? _buildOptionButton() : _buildShowAnswerButton(),
+          _showAnswer ? _buildOptionButton() : _buildShowAnswerButton()
         ],
       ),
     );
   }
 
   Widget _buildOptionButton() {
-    var buttonList = List<Widget>();
     var options = displayedCard.options;
+    var bottomNavigationBarItemList = List<BottomNavigationBarItem>();
     for (String item in options) {
-      buttonList.add(FlatButton(
-        color: Colors.blue,
-        child: Text(item),
-        onPressed: () => _pressOptionsButton(item),
-      ));
+      var bottomNavigationBarItem = BottomNavigationBarItem(
+          icon: Icon(Icons.details),
+          title: Text(
+            item,
+            softWrap: true,
+            maxLines: 2,
+            style: TextStyle(fontSize: 15, color: Colors.black),
+          ));
+      bottomNavigationBarItemList.add(bottomNavigationBarItem);
     }
-    return Row(
-        //不同状态的按钮
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: buttonList);
+    return Expanded(
+      flex: 2,
+      child: SizedBox(
+        width: double.infinity,
+        child: BottomNavigationBar(
+          currentIndex: 1,
+          type: BottomNavigationBarType.fixed,
+          items: bottomNavigationBarItemList,
+          onTap: (int index) => _pressOptionsButton(options[index]),
+        ),
+      ),
+    );
   }
 
   Widget _buildShowAnswerButton() {
-    return FlatButton(
-      color: Colors.blue,
-      child: Text("查看答案"),
-      onPressed: _pressShowAnswerButton,
+    return Expanded(
+      flex: 1,
+      child: SizedBox(
+          width: double.infinity,
+          child: FlatButton(
+            color: Theme.of(context).primaryColor,
+            child: Text("查看答案"),
+            onPressed: _pressShowAnswerButton,
+          )),
     );
   }
 

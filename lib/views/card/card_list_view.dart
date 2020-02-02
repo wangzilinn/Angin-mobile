@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
@@ -5,10 +6,10 @@ import 'package:word_front_end/models/card_detail_model.dart';
 import 'package:word_front_end/models/card_title_model.dart';
 import 'package:word_front_end/services/card_service.dart';
 import 'package:word_front_end/services/config_service.dart';
-import 'package:word_front_end/views/card_delete_view.dart';
-import 'package:word_front_end/views/card_detail_view.dart';
-import 'package:word_front_end/views/card_edit_view.dart';
-import 'package:word_front_end/views/settings_view.dart';
+import 'package:word_front_end/views/card/card_delete_view.dart';
+import 'package:word_front_end/views/card/card_detail_view.dart';
+import 'package:word_front_end/views/card/card_edit_view.dart';
+import 'package:word_front_end/views/card/card_settings_view.dart';
 
 class CardListView extends StatefulWidget {
   @override
@@ -70,7 +71,7 @@ class _CardListViewState extends State<CardListView> {
                           return Container(
                             decoration: BoxDecoration(
                                 gradient: LinearGradient(
-                              colors: [Colors.blue, Colors.red],
+                              colors: [Theme.of(context).primaryColor, Colors.red],
                               begin: Alignment.centerLeft,
                               end: Alignment.centerRight,
                             )),
@@ -108,14 +109,13 @@ class _CardListViewState extends State<CardListView> {
                         style: TextStyle(fontSize: 13),
                       ),
                       onTap: () {
-
                         if (cardTitle.status == CardStatus.READY) {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (_) => CardDetailView(
                                   cardService.getCardDetail(index))));
                         }else{
                           Fluttertoast.showToast(
-                              msg: "Done",
+                              msg: "尚未到截止时间",
                               toastLength: Toast.LENGTH_SHORT,
                               gravity: ToastGravity.BOTTOM,
                               backgroundColor: Colors.red,

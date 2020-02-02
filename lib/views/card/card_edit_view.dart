@@ -38,7 +38,7 @@ class _CardEditViewState extends State<CardEditView> {
       body: SingleChildScrollView(
         child: Container(
           height: MediaQuery.of(context).size.height -
-              AppBar().preferredSize.height,
+              AppBar().preferredSize.height - kToolbarHeight,
           child: Column(
             children: <Widget>[
               Expanded(
@@ -104,7 +104,7 @@ class _CardEditViewState extends State<CardEditView> {
   Widget get _showSaveButton {
     if (_ifShowSaveButton)
       return FlatButton(
-        color: Colors.blue,
+        color: Theme.of(context).primaryColorLight,
         child: Text("Save Changes"),
         onPressed: _pressSaveButton,
       );
