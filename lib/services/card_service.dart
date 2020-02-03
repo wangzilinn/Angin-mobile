@@ -4,21 +4,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:word_front_end/models/card_detail_model.dart';
 import 'package:word_front_end/models/card_title_model.dart';
-import 'package:word_front_end/models/rest_response_model.dart';
+import 'package:word_front_end/models/data_response_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:word_front_end/services/config_service.dart';
+import 'package:word_front_end/services/storage_service.dart';
 import 'package:word_front_end/views/card/card_delete_view.dart';
 
 class CardService {
   static const API = "http://47.103.194.29:8080/";
   static const header = {'Content-Type': "application/json"};
+  static const CARD_LIST_FILE_NAME = "card_list";
 
   List<CardDetailModel> _cardList;
   int _currentCardIndex;
 
   ConfigService get configService => GetIt.I<ConfigService>();
+  StorageService get storageService => GetIt.I<StorageService>();
 
-  Future<RESTResponseModel<List<CardDetailModel>>> _getDBCardList(
+  Future<DataResponseModel<List<CardDetailModel>>> _getDBCardList(
       {@required int reciteCardNumber, @required int newCardNumber}) {
     String url = API + "/getTodayCards/$reciteCardNumber/$newCardNumber";
     return http.get(url, headers: header).then((data) {
@@ -30,14 +33,15 @@ class CardService {
           CardDetailModel displayedCardModel = CardDetailModel.fromJson(item);
           cards.add(displayedCardModel);
         }
-        return RESTResponseModel<List<CardDetailModel>>(data: cards);
+        return DataResponseModel<List<CardDetailModel>>(data: cards);
       }
-      return RESTResponseModel<List<CardDetailModel>>(
+      return DataResponseModel<List<CardDetailModel>>(
           error: true, errorMessage: "An error occrooed");
     });
   }
 
   Future<void> updateDBCardStatus(String key, String option) {
+    var index = _currentCardIndex; //先获得索引, 防止异步函数等待回调期间索引改变
     String url = API + "/updateCardStatus/$key/$option";
     return http.get(url, headers: header).then((data) {
       if (data.statusCode == 200) {
@@ -46,29 +50,30 @@ class CardService {
         CardDetailModel displayedCardModel = CardDetailModel.fromJson(jsonData,
             deadline: configService.settings.deadline);
         //从原始列表中更新新获得的卡片的选项和过期时间.
-        assert(_cardList[_currentCardIndex].key == displayedCardModel.key);
+        assert(_cardList[index].key == displayedCardModel.key);
         //判断这个卡片是不是超出了当日过期时间,超过则从列表中删除
         if (displayedCardModel.status == CardStatus.DONE) {
-          _cardList.removeAt(_currentCardIndex);
+          _cardList.removeAt(index);
           _currentCardIndex--; //由于删除了当前的,所以要把指针向上移动一个,来使详情页中的下一个为没删除时的下一个
         } else {
-          _cardList[_currentCardIndex].options = displayedCardModel.options;
-          _cardList[_currentCardIndex].expirationTime =
-              displayedCardModel.expirationTime;
-          _cardList[_currentCardIndex].status = displayedCardModel.status;
+          _cardList[index].options = displayedCardModel.options;
+          _cardList[index].expirationTime = displayedCardModel.expirationTime;
+          _cardList[index].status = displayedCardModel.status;
         }
+        _saveCardList();
       }
     });
   }
 
   Future<void> updateCardDetails(CardDetailModel cardDetailModel) {
+    var index = _currentCardIndex; //先获得索引, 防止异步函数等待回调期间索引改变(其实这里用不着,不过以防万一
     String url = API + "/updateCardDetail/${cardDetailModel.key}";
     //先更新本地列表
-    assert(_cardList[_currentCardIndex].key == cardDetailModel.key);
-    _cardList[_currentCardIndex].front = cardDetailModel.front;
-    _cardList[_currentCardIndex].back = cardDetailModel.back;
+    assert(_cardList[index].key == cardDetailModel.key);
+    _cardList[index].front = cardDetailModel.front;
+    _cardList[index].back = cardDetailModel.back;
     //再更新数据库
-    Map<String, dynamic> cardDetailJson = cardDetailModel.toJson;
+    Map<String, dynamic> cardDetailJson = cardDetailModel.outlineToJson();
     String body = json.encode(cardDetailJson);
     return http.put(url, headers: header, body: body).then((data) {
       if (data.statusCode == 200) {
@@ -107,9 +112,12 @@ class CardService {
           configService.settings.alreadyFetchedTodayCardList = true;
           return response.data;
         } else {
+          print("未能获取服务器数据");
           return null;
         }
       });
+    }else{//如果本地已经有数据了
+      _cardList = await _readLocalCardList();
     }
   }
 
@@ -148,5 +156,24 @@ class CardService {
     if (deleteOption == DeleteOption.Permanently) {
       _deleteDBCard(_cardList[index].key);
     }
+  }
+
+  void _saveCardList() {
+    String json = jsonEncode(_cardList);
+    print("save list" + json);
+    storageService.writeFile(CARD_LIST_FILE_NAME, json);
+  }
+
+  Future<List<CardDetailModel>> _readLocalCardList() async{
+//    String st = r'[{"key":"exact","front":"\"\"<br/> The exact locations are being kept secret for reasons of security.&nbsp;\"\" <br/>Root:<br/>ex-, 外。-act, 做，驱使，称量，词源同act, examine, exigent. 即称量的，精确要求的。\"","back":"\"adj.准的，精密的；精确的vt.要求；强求；急需vi.勒索钱财<div><span style=\"\"color: rgb(255, 255, 255)\"\">确切地点因为安全原因要保密。</span></div>\"","expireDate":"2020-02-03 18:42:49","options":["一点没印象","没啥印象"]}]';
+
+    final jsonString = await storageService.readFile(CARD_LIST_FILE_NAME);
+    final jsonData = json.decode(jsonString);
+    final cards = <CardDetailModel>[];
+    for (var item in jsonData) {
+      CardDetailModel displayedCardModel = CardDetailModel.fromJson(item);
+      cards.add(displayedCardModel);
+    }
+    return cards;
   }
 }

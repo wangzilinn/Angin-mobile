@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 
 enum CardStatus { READY, SUSPEND, DONE }
@@ -20,12 +22,6 @@ class CardDetailModel {
 
   factory CardDetailModel.fromJson(Map<String, dynamic> item,
       {TimeOfDay deadline}) {
-    //处理options:
-    List<String> options = new List(); //map不能直接赋值
-    for (var opt in item['options']) {
-      options.add(opt);
-    }
-
     //处理卡片状态:
     DateTime expirationTime = DateTime.parse(item['expireDate']);
     CardStatus cardStatus;
@@ -51,14 +47,22 @@ class CardDetailModel {
         front: item['front'],
         back: item['back'],
         expirationTime: expirationTime,
-        options: options,
+        options: new List<String>.from(item['options']),
         status: cardStatus);
   }
 
-  Map<String, dynamic> get toJson =>{
+  Map<String, dynamic> outlineToJson() =>{
     "key":key,
     "front":front,
     "back":back,
     //这里上传到服务器只用写这么多
+  };
+
+  Map<String, dynamic> toJson() =>{//这个名字不能改, 用JsonEncoder使用
+    "key":key,
+    "front":front,
+    "back":back,
+    "expirationTime":expirationTime.toString(),
+    "options":options,
   };
 }

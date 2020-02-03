@@ -178,7 +178,6 @@ class _CardListViewState extends State<CardListView> {
         break;
       case DismissDirection.startToEnd:
         print("从左往右滑");
-        //TODO:进入查看+编辑界面
         Navigator.of(context).push(MaterialPageRoute(
             builder: (_) => CardEditView(cardService.getCardDetail(index))));
         result = false;
