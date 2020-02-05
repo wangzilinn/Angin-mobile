@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:word_front_end/models/card_detail_model.dart';
 import 'package:word_front_end/models/card_title_model.dart';
@@ -9,7 +8,6 @@ import 'package:word_front_end/services/config_service.dart';
 import 'package:word_front_end/views/card/card_delete_view.dart';
 import 'package:word_front_end/views/card/card_detail_view.dart';
 import 'package:word_front_end/views/card/card_edit_view.dart';
-import 'package:word_front_end/views/card/card_settings_view.dart';
 
 class CardListView extends StatefulWidget {
   @override
@@ -33,16 +31,13 @@ class _CardListViewState extends State<CardListView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.home),
+          onPressed: () {
+            Scaffold.of(context).openDrawer();
+          },
+        ),
         title: Text("Today's cards"),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (_) => SettingsView()));
-            },
-          )
-        ],
       ),
       body: RefreshIndicator(
         onRefresh: _onRefresh,

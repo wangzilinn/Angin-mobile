@@ -11,6 +11,12 @@ class _CardStatisticsViewState extends State<CardStatisticsView> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Card statistics"),
+        leading: IconButton(
+          icon: Icon(Icons.home),
+          onPressed: () {
+            Scaffold.of(context).openDrawer();
+          },
+        ),
       ),
       body: Text("这页放背单词的统计数据"),
     );

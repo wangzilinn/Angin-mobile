@@ -11,6 +11,12 @@ class _ChatListViewState extends State<ChatListView> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Chat list"),
+        leading: IconButton(
+          icon: Icon(Icons.home),
+          onPressed: () {
+            Scaffold.of(context).openDrawer();
+          },
+        ),
       ),
       body: Text("这页放聊天功能"),
     );

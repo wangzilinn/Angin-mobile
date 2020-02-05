@@ -2,16 +2,16 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:word_front_end/views/card/card_list_view.dart';
 import 'package:word_front_end/views/card/card_palette_view.dart';
+import 'package:word_front_end/views/card/card_settings_view.dart';
 import 'package:word_front_end/views/card/card_statistics_view.dart';
 import 'package:word_front_end/views/chat/chat_list_view.dart';
-import 'package:word_front_end/views/me/me_view.dart';
 
-class BottomNavigationView extends StatefulWidget {
+class NavigationView extends StatefulWidget {
   @override
-  _BottomNavigationViewState createState() => _BottomNavigationViewState();
+  _NavigationViewState createState() => _NavigationViewState();
 }
 
-class _BottomNavigationViewState extends State<BottomNavigationView> {
+class _NavigationViewState extends State<NavigationView> {
   int _currentIndex = 0;
   List<Widget> views = List<Widget>();
 
@@ -28,6 +28,24 @@ class _BottomNavigationViewState extends State<BottomNavigationView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              accountName: new Text('怡琴'),
+              onDetailsPressed: () {},
+            ),
+            ListTile(
+              title: Text("Settings"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (_) => SettingsView()));
+              },
+            )
+          ],
+        ),
+      ),
       body: views[_currentIndex],
       bottomNavigationBar: CurvedNavigationBar(
         index: 0,
@@ -35,12 +53,10 @@ class _BottomNavigationViewState extends State<BottomNavigationView> {
         items: <Widget>[
           Icon(Icons.palette, size: 30),
           Icon(Icons.list, size: 30),
-          Icon(Icons.multiline_chart, size: 30),
+          Icon(Icons.show_chart, size: 30),
           Icon(Icons.group, size: 30),
         ],
-        color: Theme
-            .of(context)
-            .primaryColor,
+        color: Theme.of(context).primaryColor,
         buttonBackgroundColor: Colors.white,
         backgroundColor: Colors.white,
         animationCurve: Curves.easeInOut,
