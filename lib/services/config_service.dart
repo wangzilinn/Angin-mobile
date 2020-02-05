@@ -7,26 +7,22 @@ import 'package:word_front_end/services/storage_service.dart';
 
 class ConfigService {
   static const CONFIG_FILE_NAME = "config";
+
   //储存所有本地配置
   LocalStatusModel _localStatusModel;
+
   StorageService get storageService => GetIt.I<StorageService>();
 
   ConfigService() {
-//    _localStatusModel = LocalStatusModel.fromJson(jsonDecode("{\"alreadyFetchedTodayCardList\""
-//        ":true,\"maxReciteCardNumber\":4,\"maxNewCardNumber\":3,"
-//        "\"deadline\":\"TimeOfDay(23:16)\""
-//    "}"
-//    ));
-
-    _readLocalStatus();
-
-    print(jsonEncode(_localStatusModel));
+//    readLocalStatus();
+//    print(jsonEncode(_localStatusModel));
   }
 
-  void updateSettings({int maxReciteCardNumber,
-    int maxNewCardNumber,
-    bool alreadyFetchedTodayCardList,
-    TimeOfDay deadline}) {
+  void updateSettings(
+      {int maxReciteCardNumber,
+      int maxNewCardNumber,
+      bool alreadyFetchedTodayCardList,
+      TimeOfDay deadline}) {
     if (maxReciteCardNumber != null) {
       _localStatusModel.maxNewCardNumber = maxReciteCardNumber;
     }
@@ -51,9 +47,23 @@ class ConfigService {
     storageService.writeFile(CONFIG_FILE_NAME, json);
   }
 
-  void _readLocalStatus() async {
+  Future<void> readLocalStatusFile() async {
     final jsonString = await storageService.readFile(CONFIG_FILE_NAME);
-    final jsonData = json.decode(jsonString);
-    _localStatusModel = LocalStatusModel.fromJson(jsonData);
+    if (jsonString == null) {
+      print("第一次运行软件, 导入默认配置");
+      _localStatusModel = LocalStatusModel(
+          maxReciteCardNumber: 4,
+          maxNewCardNumber: 1,
+          deadline: TimeOfDay(hour: 23, minute: 50),
+          alreadyFetchedTodayCardList: false);
+      _saveLocalStatus();
+    } else {
+      final jsonData = json.decode(jsonString);
+      _localStatusModel = LocalStatusModel.fromJson(jsonData);
+    }
+  }
+
+  void deleteLocalStatusFile(){
+    storageService.deleteFile(CONFIG_FILE_NAME);
   }
 }

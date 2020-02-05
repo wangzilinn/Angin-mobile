@@ -7,16 +7,14 @@ import 'package:word_front_end/services/storage_service.dart';
 import 'package:word_front_end/views/bottom_navigation_view.dart';
 
 void setupLocator() async{
-  GetIt.I.registerLazySingleton(() => CardService());
-  GetIt.I.registerLazySingleton(() => ConfigService());
   GetIt.I.registerLazySingleton(() => StorageService());
+  GetIt.I.registerLazySingleton(() => ConfigService());
+  GetIt.I.registerLazySingleton(() => CardService());
 }
 
 void main() {
   setupLocator();
   runApp(MyApp());
-
-
 }
 
 class MyApp extends StatelessWidget {

@@ -22,6 +22,7 @@ class LocalStatusModel {
     maxReciteCardNumber = json["maxReciteCardNumber"];
     maxNewCardNumber = json["maxNewCardNumber"];
     deadline = json["deadline"];
+    timeStamp = json["timeStamp"];
 
     int currentTimeStamp = _currentTimeStamp();
     if (currentTimeStamp > timeStamp){
@@ -35,7 +36,8 @@ class LocalStatusModel {
         "alreadyFetchedTodayCardList": alreadyFetchedTodayCardList,
         "maxReciteCardNumber": maxReciteCardNumber,
         "maxNewCardNumber": maxNewCardNumber,
-        "deadline": deadline.toString()
+        "deadline": deadline.toString(),
+        "timeStamp" :timeStamp,
       };
 
   //TimeOfDay类的初始化操作:

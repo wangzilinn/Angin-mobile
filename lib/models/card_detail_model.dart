@@ -23,7 +23,14 @@ class CardDetailModel {
   factory CardDetailModel.fromJson(Map<String, dynamic> item,
       {TimeOfDay deadline}) {
     //处理卡片状态:
-    DateTime expirationTime = DateTime.parse(item['expireDate']);
+    DateTime expirationTime;
+    //TODO:解决服务器命名不一致问题
+    try{
+      expirationTime = DateTime.parse(item['expireDate']);
+    }catch (e){
+      expirationTime = DateTime.parse(item['expirationTime']);
+    }
+
     CardStatus cardStatus;
     //获得当前卡片的状态:
 

@@ -12,6 +12,7 @@ class _ChatListViewState extends State<ChatListView> {
       appBar: AppBar(
         title: Text("Chat list"),
       ),
+      body: Text("这页放聊天功能"),
     );
   }
 }

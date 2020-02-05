@@ -95,7 +95,7 @@ class CardService {
     });
   }
 
-  Future<void> downloadTodayCardList() async {
+  Future<void> fetchTodayCardList() async {
     var maxNewCardNumber = configService.settings.maxNewCardNumber;
     var maxReciteCardNumber = configService.settings.maxReciteCardNumber;
 
@@ -103,6 +103,7 @@ class CardService {
         configService.settings.alreadyFetchedTodayCardList;
 
     if (!alreadyFetchedTodayCardList) {
+      print("从服务器拉取数据");
       _cardList = await _getDBCardList(
               reciteCardNumber: maxReciteCardNumber,
               newCardNumber: maxNewCardNumber)
@@ -116,7 +117,9 @@ class CardService {
           return null;
         }
       });
+      _saveCardList();
     }else{//如果本地已经有数据了
+      print("从本地拉取数据");
       _cardList = await _readLocalCardList();
     }
   }

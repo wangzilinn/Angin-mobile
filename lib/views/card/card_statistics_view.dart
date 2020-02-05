@@ -12,6 +12,7 @@ class _CardStatisticsViewState extends State<CardStatisticsView> {
       appBar: AppBar(
         title: Text("Card statistics"),
       ),
+      body: Text("这页放背单词的统计数据"),
     );
   }
 }

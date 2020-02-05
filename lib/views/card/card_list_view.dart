@@ -118,7 +118,7 @@ class _CardListViewState extends State<CardListView> {
                               msg: "尚未到截止时间",
                               toastLength: Toast.LENGTH_SHORT,
                               gravity: ToastGravity.BOTTOM,
-                              backgroundColor: Colors.red,
+                              backgroundColor: Theme.of(context).primaryColor,
                               textColor: Colors.white,
                               fontSize: 12.0
                           );
@@ -145,7 +145,8 @@ class _CardListViewState extends State<CardListView> {
       _isLoading = true;
     });
 
-    await cardService.downloadTodayCardList();
+    await configService.readLocalStatusFile();//启动软件时先从本地读取配置数据
+    await cardService.fetchTodayCardList();
 
     setState(() {
       _isLoading = false;
@@ -154,8 +155,8 @@ class _CardListViewState extends State<CardListView> {
 
   //下拉刷新
   Future<void> _onRefresh() async {
-    _fetchCards();
     print("refresh");
+    await cardService.fetchTodayCardList();
   }
 
   Future<bool> _confirmDismiss(DismissDirection direction, int index) async {
