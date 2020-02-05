@@ -66,37 +66,36 @@ class _CardListViewState extends State<CardListView> {
                     direction: DismissDirection.horizontal,
                     confirmDismiss: (direction) =>
                         _confirmDismiss(direction, index),
-                    background: Container(
-                        child: Builder(builder: (_) {
-                          return Container(
-                            decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                              colors: [Theme.of(context).primaryColor, Colors.red],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                            )),
-                            padding: EdgeInsets.only(left:16, right: 16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Align(
-                                  child: Icon(
-                                    Icons.details,
-                                    color: Colors.white,
-                                  ),
-                                  alignment: Alignment.centerLeft,
-                                ),
-                                Align(
-                                  child: Icon(
-                                    Icons.delete,
-                                    color: Colors.white,
-                                  ),
-                                  alignment: Alignment.centerRight,
-                                ),
-                              ],
+                    background: Container(child: Builder(builder: (_) {
+                      return Container(
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                          colors: [Theme.of(context).primaryColor, Colors.red],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        )),
+                        padding: EdgeInsets.only(left: 16, right: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Align(
+                              child: Icon(
+                                Icons.details,
+                                color: Colors.white,
+                              ),
+                              alignment: Alignment.centerLeft,
                             ),
-                          );
-                        })),
+                            Align(
+                              child: Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                              ),
+                              alignment: Alignment.centerRight,
+                            ),
+                          ],
+                        ),
+                      );
+                    })),
                     child: ListTile(
                       title: Text(cardTitle.key,
                           style: TextStyle(
@@ -113,15 +112,11 @@ class _CardListViewState extends State<CardListView> {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (_) => CardDetailView(
                                   cardService.getCardDetail(index))));
-                        }else{
-                          Fluttertoast.showToast(
-                              msg: "尚未到截止时间",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
+                        } else {
+                          Scaffold.of(context).showSnackBar(SnackBar(
                               backgroundColor: Theme.of(context).primaryColor,
-                              textColor: Colors.white,
-                              fontSize: 12.0
-                          );
+                              content: Text("尚未到截止时间"),
+                              duration: Duration(milliseconds: 200)));
                         }
                       },
                     ),
@@ -145,7 +140,7 @@ class _CardListViewState extends State<CardListView> {
       _isLoading = true;
     });
 
-    await configService.readLocalStatusFile();//启动软件时先从本地读取配置数据
+    await configService.readLocalStatusFile(); //启动软件时先从本地读取配置数据
     await cardService.fetchTodayCardList();
 
     setState(() {

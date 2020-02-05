@@ -1,6 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:word_front_end/views/card/card_list_view.dart';
+import 'package:word_front_end/views/card/card_palette_view.dart';
 import 'package:word_front_end/views/card/card_statistics_view.dart';
 import 'package:word_front_end/views/chat/chat_list_view.dart';
 import 'package:word_front_end/views/me/me_view.dart';
@@ -18,10 +19,10 @@ class _BottomNavigationViewState extends State<BottomNavigationView> {
   void initState() {
     super.initState();
     views
+      ..add(CardPaletteView())
       ..add(CardListView())
       ..add(CardStatisticsView())
-      ..add(ChatListView())
-      ..add(MeView());
+      ..add(ChatListView());
   }
 
   @override
@@ -32,12 +33,14 @@ class _BottomNavigationViewState extends State<BottomNavigationView> {
         index: 0,
         height: 50.0,
         items: <Widget>[
+          Icon(Icons.palette, size: 30),
           Icon(Icons.list, size: 30),
-          Icon(Icons.apps, size: 30),
+          Icon(Icons.multiline_chart, size: 30),
           Icon(Icons.group, size: 30),
-          Icon(Icons.person, size: 30),
         ],
-        color:Theme.of(context).primaryColor,
+        color: Theme
+            .of(context)
+            .primaryColor,
         buttonBackgroundColor: Colors.white,
         backgroundColor: Colors.white,
         animationCurve: Curves.easeInOut,
