@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:word_front_end/services/config_service.dart';
 
-class SettingsView extends StatefulWidget {
+class CardSettingsView extends StatefulWidget {
   @override
-  _SettingsViewState createState() => _SettingsViewState();
+  _CardSettingsViewState createState() => _CardSettingsViewState();
 }
 
-class _SettingsViewState extends State<SettingsView> {
+class _CardSettingsViewState extends State<CardSettingsView> {
   ConfigService get configService => GetIt.I<ConfigService>();
 
   TextEditingController _maxReciteCardNumberController =
@@ -28,7 +28,7 @@ class _SettingsViewState extends State<SettingsView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Settings"),
+        title: Text("Card settings"),
       ),
       body: Builder(builder: (context) {
         return Padding(
@@ -87,27 +87,6 @@ class _SettingsViewState extends State<SettingsView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text("删除本地配置数据:"),
-                  FlatButton(
-                    child: Text(
-                      "删除",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    color: Theme.of(context).primaryColorLight,
-                    onPressed: () {
-                      configService.deleteLocalStatusFile();
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        content: Text("已删除本地配置数据"),
-                        duration: Duration(milliseconds: 200),
-                      ));
-                    },
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
                   Text("从服务器重新获取单词今日单词列表"),
                   FlatButton(
                     child: Text(
@@ -126,7 +105,7 @@ class _SettingsViewState extends State<SettingsView> {
                     },
                   )
                 ],
-              )
+              ),
             ],
           ),
         );

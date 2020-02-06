@@ -5,6 +5,7 @@ import 'package:word_front_end/views/card/card_palette_view.dart';
 import 'package:word_front_end/views/card/card_settings_view.dart';
 import 'package:word_front_end/views/card/card_statistics_view.dart';
 import 'package:word_front_end/views/chat/chat_list_view.dart';
+import 'package:word_front_end/views/settings/settings_view.dart';
 
 class NavigationView extends StatefulWidget {
   @override
