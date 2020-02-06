@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:get_it/get_it.dart';
+import 'package:word_front_end/services/config_service.dart';
 
 class CardPaletteView extends StatefulWidget {
   @override
@@ -7,10 +10,10 @@ class CardPaletteView extends StatefulWidget {
 }
 
 class _CardPaletteViewState extends State<CardPaletteView> {
+  ConfigService get configService => GetIt.I<ConfigService>();
+
   @override
   Widget build(BuildContext context) {
-    var images = List<String>();
-    images..add("11")..add("22")..add("value")..add("value3");
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -24,29 +27,159 @@ class _CardPaletteViewState extends State<CardPaletteView> {
       body: Column(
         children: <Widget>[
           Expanded(
-            flex: 7,
+            flex: 1,
+            child: Container(),
+          ),
+          Expanded(
+            flex: 8,
             child: Swiper(
               itemBuilder: (BuildContext context, int index) {
-                return new Image.network(
-                  "http://via.placeholder.com/288x188",
-                  fit: BoxFit.fill,
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(16.0),
+                  child: Container(
+                    color: configService.colors[index],
+                    child: Padding(
+                      padding: const EdgeInsets.all(30.0),
+                      child: Column(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 3,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Row(
+                                children: <Widget>[
+                                  Text(
+                                    "English",
+                                    style: TextStyle(fontSize: 50),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(
+                                    "卡片总数:",
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                  Text(
+                                    "1234张",
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Container(
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(
+                                      "卡片完成度:",
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                    Text(
+                                      "100%",
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 3,
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: SizedBox(
+                                height: double.infinity,
+                                width: double.infinity,
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.add_circle,
+                                    size: 60,
+                                  ),
+                                  onPressed: () {},
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
                 );
               },
-              itemCount: 10,
-              itemWidth: 300.0,
-              layout: SwiperLayout.STACK,
+              itemCount: 3,
+              viewportFraction: 0.8,
+              scale: 0.9,
+              pagination: SwiperPagination(),
             ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(),
           ),
           Expanded(
             flex: 3,
             child: SizedBox(
                 width: double.infinity,
-                child: Container(
-                    color: Colors.red,
-                    child: Text(
-                      "tet",
-                      style: TextStyle(color: Colors.red),
-                    ))),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                  child: Container(
+                      child: Column(
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            "今日要背卡片总数:",
+                            style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "100张",
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          )
+                        ],
+                      ),
+                      Divider(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            "预计花费时间:",
+                            style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "100min",
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  )),
+                )),
           )
         ],
       ),

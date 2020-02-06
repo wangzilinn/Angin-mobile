@@ -32,9 +32,8 @@ class _NavigationViewState extends State<NavigationView> {
       drawer: Drawer(
         child: ListView(
           children: <Widget>[
-            UserAccountsDrawerHeader(
-              accountName: new Text('怡琴'),
-              onDetailsPressed: () {},
+            DrawerHeader(
+              child: Container(color: Colors.red,),
             ),
             ListTile(
               title: Text("Settings"),

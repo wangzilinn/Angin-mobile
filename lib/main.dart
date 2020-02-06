@@ -18,13 +18,14 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  ConfigService get configService => GetIt.I<ConfigService>();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         title: "Lover",
         theme: ThemeData(
-            primaryColor: Color.fromARGB(0xff, 75, 145, 35),
-            primaryColorLight: Color.fromARGB(0xff, 116, 180, 70)),
+            primaryColor: configService.colors[0],
+            primaryColorLight: configService.colors[1],),
         home: NavigationView());
   }
 }

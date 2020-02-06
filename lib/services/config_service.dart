@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:word_front_end/models/local_status_model.dart';
@@ -13,9 +14,15 @@ class ConfigService {
 
   StorageService get storageService => GetIt.I<StorageService>();
 
+  List<Color> colors = List();
+
   ConfigService() {
-//    readLocalStatus();
-//    print(jsonEncode(_localStatusModel));
+    colors
+      ..add(Color.fromARGB(0xff, 139, 161, 96))
+      ..add(Color.fromARGB(0xff, 211, 213, 164))
+      ..add(Color.fromARGB(0xff, 135, 160, 138))
+      ..add(Color.fromARGB(0xff, 93, 114, 95))
+      ..add(Color.fromARGB(0xff, 56, 83, 52));
   }
 
   void updateSettings(
@@ -63,7 +70,7 @@ class ConfigService {
     }
   }
 
-  void deleteLocalStatusFile(){
+  void deleteLocalStatusFile() {
     storageService.deleteFile(CONFIG_FILE_NAME);
   }
 }
