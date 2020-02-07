@@ -28,4 +28,5 @@ class MyApp extends StatelessWidget {
             primaryColorLight: configService.colors[1],),
         home: NavigationView());
   }
+
 }

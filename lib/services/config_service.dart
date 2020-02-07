@@ -74,3 +74,4 @@ class ConfigService {
     storageService.deleteFile(CONFIG_FILE_NAME);
   }
 }
+

@@ -27,7 +27,7 @@ class CardService {
     return http.get(url, headers: header).then((data) {
       if (data.statusCode == 200) {
         var utf8decoder = new Utf8Decoder();
-        final jsonData = json.decode(utf8decoder.convert(data.bodyBytes));
+        final jsonData = jsonDecode(utf8decoder.convert(data.bodyBytes));//change from json.decode
         final cards = <CardDetailModel>[];
         for (var item in jsonData) {
           CardDetailModel displayedCardModel = CardDetailModel.fromJson(item);

@@ -66,7 +66,7 @@ class _CardStatisticsViewState extends State<CardStatisticsView> {
 //          ),
         ),
         tickProviderSpec: charts.BasicNumericTickProviderSpec( // 轴线刻度配置
-          zeroBound:false,
+          zeroBound:false,//从0开始显示
           dataIsInWholeNumbers: false,
           desiredTickCount: 3, // 期望显示几个刻度
         ),
