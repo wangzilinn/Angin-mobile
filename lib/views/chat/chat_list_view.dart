@@ -15,7 +15,10 @@ class ChatListView extends StatefulWidget {
 
 class _ChatListViewState extends State<ChatListView> {
   ConfigService get configService => GetIt.I<ConfigService>();
+
   ChatService get chatService => GetIt.I<ChatService>();
+
+  bool isConnecting;
 
   String id;
   String peerId;
@@ -40,7 +43,8 @@ class _ChatListViewState extends State<ChatListView> {
     imageUrl = "";
 
     //通知服务器开始聊天服务
-    chatService.connect();
+    initChat();
+    print("a");
   }
 
   @override
@@ -56,23 +60,22 @@ class _ChatListViewState extends State<ChatListView> {
           ),
         ),
         body: WillPopScope(
-          //返回时关掉键盘
-          child: Stack(
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  //TODO:List of message
-                  _buildListMessage(),
-                  //TODO:Sticker
-                  (isShowSticker ? _buildSticker() : Container()),
-                  //TODO:Input
-                  _buildInput(),
-                ],
-              ),
-              //TODO:loading
-              _buildLoading(),
-            ],
-          ),
+          child: isLoading
+              ? _buildLoading()
+              : Stack(
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        //TODO:List of message
+                        _buildListMessage(),
+                        //TODO:Sticker
+                        (isShowSticker ? _buildSticker() : Container()),
+                        //TODO:Input
+                        _buildInput(),
+                      ],
+                    ),
+                  ],
+                ),
           onWillPop: _onBackPress,
         ));
   }
@@ -82,12 +85,13 @@ class _ChatListViewState extends State<ChatListView> {
       child: StreamBuilder(
         //TODO:stream:
         stream: chatService.getTheLatestMessage(),
-      builder: (context, data){
-          if(data.hasData){
+        builder: (context, data) {
+          if (data.hasData) {
             print(data.data);
           }
+          print("aa");
           return Container();
-      },
+        },
       ),
     );
   }
@@ -287,18 +291,16 @@ class _ChatListViewState extends State<ChatListView> {
   }
 
   _buildLoading() {
-    return Positioned(
-      child: isLoading
-          ? Container(
-              child: Center(
-                child: CircularProgressIndicator(
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(configService.colors[1]),
-                ),
+    return isLoading
+        ? Container(
+            child: Center(
+              child: CircularProgressIndicator(
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(configService.colors[1]),
               ),
-            )
-          : Container(),
-    );
+            ),
+          )
+        : Container();
   }
 
   Future<bool> _onBackPress() {
@@ -349,5 +351,17 @@ class _ChatListViewState extends State<ChatListView> {
   Future<String> _uploadFile() async {
     //TODO:upload file and return file url.
     return "";
+  }
+
+  void initChat() async {
+    setState(() {
+      isLoading = true;
+    });
+    print("a");
+    await chatService.connect();
+    print("b");
+    setState(() {
+      isLoading = false;
+    });
   }
 }

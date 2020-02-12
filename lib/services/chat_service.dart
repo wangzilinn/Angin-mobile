@@ -9,7 +9,7 @@ class ChatService {
     client = MqttClient.withPort("47.103.194.29", "dart_test", 1883);
   }
 
-  void connect() async* {
+  connect() async {
     client.onDisconnected = _onDisconnected; //断开连接回调
     client.onConnected = _onConnected;
     client.onSubscribed = _onSubscribe;
@@ -31,6 +31,9 @@ class ChatService {
       print(e);
       client.disconnect();
     }
+
+    const String subTopic = 'chat';
+    client.subscribe(subTopic, MqttQos.exactlyOnce);
   }
 
   void sendMessage(String message) {
