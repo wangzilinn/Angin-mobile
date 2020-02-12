@@ -51,22 +51,22 @@ class ChatService {
   }
 
   void _onDisconnected() {
-    print('EXAMPLE::OnDisconnected client callback - Client disconnection');
+    print('OnDisconnected client callback - Client disconnection');
     if (client.connectionStatus.returnCode == MqttConnectReturnCode.solicited) {
-      print('EXAMPLE::OnDisconnected callback is solicited, this is correct');
+      print('OnDisconnected callback is solicited, this is correct');
     }
   }
 
   void _onConnected() {
     print(
-        'EXAMPLE::OnConnected client callback - Client connection was sucessful');
+        'OnConnected client callback - Client connection was sucessful');
   }
 
   void _onSubscribe(String topic) {
-    print('EXAMPLE::Subscription confirmed for topic $topic');
+    print('Subscription confirmed for topic $topic');
   }
 
   void _pong() {
-    print('EXAMPLE::Ping response client callback invoked');
+    print('Ping response client callback invoked');
   }
 }

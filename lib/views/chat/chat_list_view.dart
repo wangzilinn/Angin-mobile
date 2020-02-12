@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:word_front_end/models/message_model.dart';
-import 'package:word_front_end/services/card_service.dart';
+import 'package:word_front_end/services/chat_service.dart';
 import 'package:word_front_end/services/config_service.dart';
 
 class ChatListView extends StatefulWidget {
@@ -15,6 +15,7 @@ class ChatListView extends StatefulWidget {
 
 class _ChatListViewState extends State<ChatListView> {
   ConfigService get configService => GetIt.I<ConfigService>();
+  ChatService get chatService => GetIt.I<ChatService>();
 
   String id;
   String peerId;
@@ -38,7 +39,8 @@ class _ChatListViewState extends State<ChatListView> {
     isShowSticker = false;
     imageUrl = "";
 
-    //TODO:通知服务器开始聊天服务
+    //通知服务器开始聊天服务
+    chatService.connect();
   }
 
   @override
@@ -79,10 +81,15 @@ class _ChatListViewState extends State<ChatListView> {
     return Flexible(
       child: StreamBuilder(
         //TODO:stream:
-//        stream: ,
-      builder: (context, ),
+        stream: chatService.getTheLatestMessage(),
+      builder: (context, data){
+          if(data.hasData){
+            print(data.data);
+          }
+          return Container();
+      },
       ),
-    )
+    );
   }
 
   _buildItem(int index, MessageModel messageModel) {
