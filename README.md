@@ -69,6 +69,12 @@
 2. 点击option按钮后, 更新整个页面 by:调用cardService.next()
 3. cardService.next()实现:cardService时刻知道当先显示的卡片的序列号
 
+## chat
+1. 发送图片:
+   1. 将图片上传到服务器
+   2. 从服务器获得URL
+   3. 根据URL从服务器下载图片, 用于显示
+
 # TODO:
 
 第一版完成了
