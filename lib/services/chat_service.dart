@@ -10,6 +10,7 @@ class ChatService {
   }
 
   connect() async {
+    client.keepAlivePeriod = 20; //20s
     client.onDisconnected = _onDisconnected; //断开连接回调
     client.onConnected = _onConnected;
     client.onSubscribed = _onSubscribe;
@@ -46,10 +47,14 @@ class ChatService {
 
   Stream<String> getTheLatestMessage() {
     return client.updates.map((List<MqttReceivedMessage<MqttMessage>> data) {
-      final MqttPublishMessage mqttPublishMessage = data[0].payload;
-      final String pt = MqttPublishPayload.bytesToStringAsString(
-          mqttPublishMessage.payload.message);
-      return pt;
+      String re = "";
+      for(var item in data){
+        final MqttPublishMessage mqttPublishMessage = item.payload;
+        final String pt = MqttPublishPayload.bytesToStringAsString(
+            mqttPublishMessage.payload.message);
+        re += pt;
+      }
+      return re;
     });
   }
 
