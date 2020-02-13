@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:mqtt_client/mqtt_client.dart';
+import 'package:word_front_end/models/message_model.dart';
 
 class ChatService {
   MqttClient client;
@@ -37,10 +40,15 @@ class ChatService {
     client.subscribe(subTopic, MqttQos.exactlyOnce);
   }
 
-  void sendMessage(String message) {
+  void sendMessageModel(MessageModel messageModel){
+    String json = jsonEncode(messageModel);
+    _sendString(json);
+  }
+
+  void _sendString(String string) {
     const String pubTopic = 'chat';
     final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
-    builder.addString(message);
+    builder.addUTF8String(string);
 
     client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload);
   }
@@ -50,8 +58,7 @@ class ChatService {
       String re = "";
       for(var item in data){
         final MqttPublishMessage mqttPublishMessage = item.payload;
-        final String pt = MqttPublishPayload.bytesToStringAsString(
-            mqttPublishMessage.payload.message);
+        String pt = Utf8Decoder().convert(mqttPublishMessage.payload.message);
         re += pt;
       }
       return re;

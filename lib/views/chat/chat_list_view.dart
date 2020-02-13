@@ -20,7 +20,7 @@ class _ChatListViewState extends State<ChatListView> {
 
   bool isConnecting;
 
-  String id;
+  String selfId;
   String peerId;
 
   File imageFile;
@@ -42,9 +42,10 @@ class _ChatListViewState extends State<ChatListView> {
     isShowSticker = false;
     imageUrl = "";
 
+    selfId = "1996";
+
     //通知服务器开始聊天服务
     initChat();
-    print("a");
   }
 
   @override
@@ -98,7 +99,7 @@ class _ChatListViewState extends State<ChatListView> {
 
   _buildItem(int index, MessageModel messageModel) {
     bool isRightSide = false;
-    if (messageModel.userId == id) isRightSide = true;
+    if (messageModel.userId == selfId) isRightSide = true;
     //my message
     return Row(
       children: <Widget>[
@@ -258,7 +259,7 @@ class _ChatListViewState extends State<ChatListView> {
                   hintText: 'type yout message..',
                   hintStyle: TextStyle(color: Colors.grey),
                 ),
-                focusNode: focusNode,
+//                focusNode: focusNode,
               ),
             ),
           ),
@@ -318,10 +319,12 @@ class _ChatListViewState extends State<ChatListView> {
     if (content.trim() != '') {
       textEditingController.clear();
     }
+    MessageModel messageModel = MessageModel(selfId, messageType, content);
+    chatService.sendMessageModel(messageModel);
   }
 
   void _onFocusChange() {
-    //hide sticker when keyboard appear
+    //hide sticker when keybd oarappear
     if (focusNode.hasFocus) {
       setState(() {
         isShowSticker = false;
@@ -357,9 +360,7 @@ class _ChatListViewState extends State<ChatListView> {
     setState(() {
       isLoading = true;
     });
-    print("a");
     await chatService.connect();
-    print("b");
     setState(() {
       isLoading = false;
     });
