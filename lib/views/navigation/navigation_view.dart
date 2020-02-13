@@ -33,7 +33,9 @@ class _NavigationViewState extends State<NavigationView> {
         child: ListView(
           children: <Widget>[
             DrawerHeader(
-              child: Container(color: Colors.red,),
+              child: Container(
+                color: Colors.red,
+              ),
             ),
             ListTile(
               title: Text("Settings"),
@@ -46,7 +48,10 @@ class _NavigationViewState extends State<NavigationView> {
           ],
         ),
       ),
-      body: views[_currentIndex],
+      body: IndexedStack(
+        index: _currentIndex,
+        children: views,
+      ),
       bottomNavigationBar: CurvedNavigationBar(
         index: 0,
         height: 50.0,

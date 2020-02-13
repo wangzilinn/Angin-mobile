@@ -43,9 +43,11 @@ class _ChatListViewState extends State<ChatListView> {
     imageUrl = "";
 
     selfId = "1996";
+    peerId = "1999";
 
     //通知服务器开始聊天服务
     initChat();
+    print("init1");
   }
 
   @override
@@ -82,15 +84,24 @@ class _ChatListViewState extends State<ChatListView> {
   }
 
   _buildListMessage() {
+    print("cnt");
     return Flexible(
       child: StreamBuilder(
         //TODO:stream:
-        stream: chatService.getTheLatestMessage(),
-        builder: (context, data) {
-          if (data.hasData) {
-            print(data.data);
+//        initialData: chatService.messageList,
+        stream: chatService.getTheLatestMessageList(),
+        builder: (context, snap) {
+          if (snap.hasData) {
+            print(snap.data.length);
+            return ListView.builder(
+              padding: EdgeInsets.all(10.0),
+              itemBuilder: (context, index) =>
+                  _buildItem(index, snap.data[index]),
+              itemCount: snap.data.length,
+              controller: listScrollController,
+              reverse: true,
+            );
           }
-          print("aa");
           return Container();
         },
       ),
@@ -101,83 +112,86 @@ class _ChatListViewState extends State<ChatListView> {
     bool isRightSide = false;
     if (messageModel.userId == selfId) isRightSide = true;
     //my message
-    return Row(
-      children: <Widget>[
-        Builder(
-          builder: (_) {
-            switch (messageModel.type) {
-              case MessageType.String:
-                return Container(
-                  child: Text(
-                    messageModel.content,
-                    style: TextStyle(color: configService.colors[0]),
-                  ),
-                  padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                  width: 200.0,
-                  decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(8.0)),
-                  margin: isRightSide
-                      ? EdgeInsets.only(bottom: 10.0, right: 10.0)
-                      : EdgeInsets.only(bottom: 10.0, left: 10.0),
-                );
-              case MessageType.Image:
-                return Container(
-                  child: FlatButton(
-                    child: Material(
-                      child: CachedNetworkImage(
-                        placeholder: (context, url) => Container(
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                configService.colors[1]),
+    return Container(
+      child: Row(
+        mainAxisAlignment:
+            isRightSide ? MainAxisAlignment.end : MainAxisAlignment.start,
+        children: <Widget>[
+          Builder(
+            builder: (_) {
+              switch (messageModel.type) {
+                case MessageType.String:
+                  return Container(
+                    child: Text(
+                      messageModel.content,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+                    width: 200.0,
+                    decoration: BoxDecoration(
+                        color: configService.colors[2],
+                        borderRadius: BorderRadius.circular(8.0)),
+                    margin: isRightSide
+                        ? EdgeInsets.only(bottom: 10.0, right: 10.0)
+                        : EdgeInsets.only(bottom: 10.0, left: 10.0),
+                  );
+                case MessageType.Image:
+                  return Container(
+                    child: FlatButton(
+                      child: Material(
+                        child: CachedNetworkImage(
+                          placeholder: (context, url) => Container(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  configService.colors[1]),
+                            ),
+                            width: 200.0,
+                            height: 200.0,
+                            padding: EdgeInsets.all(70.0),
+                            decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8.0)),
+                            ),
                           ),
-                          width: 200.0,
-                          height: 200.0,
-                          padding: EdgeInsets.all(70.0),
-                          decoration: BoxDecoration(
-                            color: Colors.grey,
+                          errorWidget: (context, url, error) => Material(
+                            child: Container(
+                                width: 200.0,
+                                height: 200.0,
+                                child: Text("load failed")),
                             borderRadius:
                                 BorderRadius.all(Radius.circular(8.0)),
+                            clipBehavior: Clip.hardEdge, //+笔记
                           ),
+                          imageUrl: messageModel.content,
+                          width: 200.0,
+                          height: 200.0,
+                          fit: BoxFit.cover,
                         ),
-                        errorWidget: (context, url, error) => Material(
-                          child: Container(
-                              width: 200.0,
-                              height: 200.0,
-                              child: Text("load failed")),
-                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                          clipBehavior: Clip.hardEdge, //+笔记
-                        ),
-                        imageUrl: messageModel.content,
-                        width: 200.0,
-                        height: 200.0,
-                        fit: BoxFit.cover,
+                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        clipBehavior: Clip.hardEdge,
                       ),
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                      clipBehavior: Clip.hardEdge,
+                      onPressed: () {},
                     ),
-                    onPressed: () {},
-                  ),
-                  margin: isRightSide
-                      ? EdgeInsets.only(bottom: 10.0, right: 10.0)
-                      : EdgeInsets.only(bottom: 10.0, left: 10.0),
-                );
-              case MessageType.Sticker:
-                return Container(
-                  child: Image.asset('images/${messageModel.content}.gif}',
-                      width: 100.0, height: 100.0, fit: BoxFit.cover),
-                  margin: isRightSide
-                      ? EdgeInsets.only(bottom: 10.0, right: 10.0)
-                      : EdgeInsets.only(bottom: 10.0, left: 10.0),
-                );
-              default:
-                return Container();
-            }
-          },
-        )
-      ],
-      crossAxisAlignment:
-          isRightSide ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                    margin: isRightSide
+                        ? EdgeInsets.only(bottom: 10.0, right: 10.0)
+                        : EdgeInsets.only(bottom: 10.0, left: 10.0),
+                  );
+                case MessageType.Sticker:
+                  return Container(
+                    child: Image.asset('images/${messageModel.content}.gif}',
+                        width: 100.0, height: 100.0, fit: BoxFit.cover),
+                    margin: isRightSide
+                        ? EdgeInsets.only(bottom: 10.0, right: 10.0)
+                        : EdgeInsets.only(bottom: 10.0, left: 10.0),
+                  );
+                default:
+                  return Container();
+              }
+            },
+          )
+        ],
+      ),
     );
   }
 
@@ -305,14 +319,15 @@ class _ChatListViewState extends State<ChatListView> {
   }
 
   Future<bool> _onBackPress() {
-    if (isShowSticker) {
-      setState(() {
-        isShowSticker = false;
-      });
-    } else {
-      Navigator.pop(context); //+笔记
-    }
-    return Future.value(false); //+笔记
+//    if (isShowSticker) {
+//      setState(() {
+//        isShowSticker = false;
+//      });
+//    } else {
+//      Navigator.pop(context); //+笔记
+//    }
+    print(("back"));
+    return Future.value(true); //+笔记
   }
 
   void _onSendMessage(String content, MessageType messageType) {
