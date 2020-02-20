@@ -10,6 +10,9 @@ class ChatService {
 
   bool hasInitialized = false;
 
+  String selfId = "1996";
+  String peerId = "1999";
+
   static bool save = true;
 
   ChatService() {
