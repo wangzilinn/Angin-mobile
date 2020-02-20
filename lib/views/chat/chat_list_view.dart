@@ -47,11 +47,11 @@ class _ChatListViewState extends State<ChatListView> {
 
     //通知服务器开始聊天服务
     initChat();
-    print("init1");
   }
 
   @override
   Widget build(BuildContext context) {
+    print("called build");
     return Scaffold(
         appBar: AppBar(
           title: Text("Chat list"),
@@ -84,15 +84,15 @@ class _ChatListViewState extends State<ChatListView> {
   }
 
   _buildListMessage() {
-    print("cnt");
+    print("call _buildListMessage");
     return Flexible(
       child: StreamBuilder(
         //TODO:stream:
-//        initialData: chatService.messageList,
+        initialData: chatService.messageList,
         stream: chatService.getTheLatestMessageList(),
         builder: (context, snap) {
           if (snap.hasData) {
-            print(snap.data.length);
+            print("data length: ${snap.data.length}");
             return ListView.builder(
               padding: EdgeInsets.all(10.0),
               itemBuilder: (context, index) =>

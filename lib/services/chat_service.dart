@@ -17,7 +17,6 @@ class ChatService {
   }
 
   connect() async {
-
     //MQTT
     client.keepAlivePeriod = 20; //20s
     client.onDisconnected = _onDisconnected; //断开连接回调
@@ -34,7 +33,7 @@ class ChatService {
 
     client.connectionMessage = connectMessage;
 
-    if (!hasInitialized){
+    if (!hasInitialized) {
       try {
         //TODO:读取本地消息历史
         //TODO:读取错过的消息
@@ -45,7 +44,6 @@ class ChatService {
         const String subTopic = 'chat';
         client.subscribe(subTopic, MqttQos.exactlyOnce);
         hasInitialized = true;
-
       } on Exception catch (e) {
         print(e);
         print("出现错误, 断开连接");
@@ -54,9 +52,7 @@ class ChatService {
     }
   }
 
-//  get messageList => _messageList.reversed;//这样最后发出的消息才在最下面
-
-  void sendMessageModel(MessageModel messageModel){
+  void sendMessageModel(MessageModel messageModel) {
     String json = jsonEncode(messageModel);
     _sendString(json);
   }
@@ -69,27 +65,25 @@ class ChatService {
     client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload);
   }
 
-
+  static var cnt = 0;
 
   Stream<List<MessageModel>> getTheLatestMessageList() {
+    print("registe fun: getTheLatestMessageList");
+    if (cnt == 0){
+      cnt++;
+      return null;
+    }
     return client.updates.map((List<MqttReceivedMessage<MqttMessage>> data) {
       String re = "";
-      for(var item in data){
+      for (var item in data) {
         final MqttPublishMessage mqttPublishMessage = item.payload;
         String pt = Utf8Decoder().convert(mqttPublishMessage.payload.message);
         re += pt;
       }
-      print("map1: " + re);
-//      if(save == true){
-        messageList.insert(0, MessageModel.fromJson(jsonDecode(re)));
-//        save = false;
-        return messageList;
-//      }
-//      save = true;
-//      return messageList;
-    }).asBroadcastStream();
+      messageList.insert(0, MessageModel.fromJson(jsonDecode(re)));
+      return messageList;
+    });
   }
-
 
   void _onDisconnected() {
     print('OnDisconnected client callback - Client disconnection');
@@ -100,8 +94,7 @@ class ChatService {
   }
 
   void _onConnected() {
-    print(
-        'OnConnected client callback - Client connection was sucessful');
+    print('OnConnected client callback - Client connection was sucessful');
   }
 
   void _onSubscribe(String topic) {
