@@ -4,7 +4,7 @@ import 'package:word_front_end/services/chat_service.dart';
 import 'package:word_front_end/services/config_service.dart';
 import 'package:word_front_end/views/chat/chat_input_view.dart';
 
-import 'chat_list_view.dart';
+import 'messages_list_view.dart';
 
 class ChatView extends StatefulWidget {
   @override
@@ -16,7 +16,7 @@ class _ChatViewState extends State<ChatView> {
 
   ConfigService get configService => GetIt.I<ConfigService>();
 
-  bool isLoading = true;
+  bool isLoading;
 
   @override
   void initState() {
@@ -43,7 +43,7 @@ class _ChatViewState extends State<ChatView> {
                   children: <Widget>[
                     Column(
                       children: <Widget>[
-                        ChatListView(),
+                        MessagesListView(),
                         ChatInputView(),
                       ],
                     ),
@@ -59,6 +59,9 @@ class _ChatViewState extends State<ChatView> {
   }
 
   void initChat() async {
+    setState(() {
+      isLoading = true;
+    });
     await chatService.connect();
     setState(() {
       isLoading = false;

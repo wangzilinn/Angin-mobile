@@ -7,15 +7,13 @@ import 'package:word_front_end/models/message_model.dart';
 import 'package:word_front_end/services/chat_service.dart';
 import 'package:word_front_end/services/config_service.dart';
 
-class ChatListView extends StatelessWidget {
+class MessagesListView extends StatelessWidget {
   ConfigService get configService => GetIt.I<ConfigService>();
-  ChatService get chatService => GetIt.I<ChatService>();
 
-  bool isConnecting;
+  ChatService get chatService => GetIt.I<ChatService>();
 
   File imageFile;
   bool isShowSticker;
-  bool isLoading;
   String imageUrl;
 
   final ScrollController listScrollController = new ScrollController();

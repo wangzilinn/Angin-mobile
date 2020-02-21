@@ -55,7 +55,6 @@ class _ChatInputViewState extends State<ChatInputView> {
     //当表情出现时,关掉键盘
     focusNode.unfocus();
     setState(() {
-      print("setState");
       isShowSticker = !isShowSticker;
     });
   }
