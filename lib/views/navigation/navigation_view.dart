@@ -1,11 +1,10 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:word_front_end/views/card/card_list_view.dart';
-import 'package:word_front_end/views/card/card_palette_view.dart';
-import 'package:word_front_end/views/card/card_settings_view.dart';
-import 'package:word_front_end/views/card/card_statistics_view.dart';
-import 'package:word_front_end/views/chat/chat_list_view.dart';
+import 'package:word_front_end/views/chat/chat_view.dart';
+import 'package:word_front_end/views/palette/card_palette_view.dart';
 import 'package:word_front_end/views/settings/settings_view.dart';
+import 'package:word_front_end/views/statistics/card_statistics_view.dart';
 
 class NavigationView extends StatefulWidget {
   @override
@@ -23,7 +22,7 @@ class _NavigationViewState extends State<NavigationView> {
       ..add(CardPaletteView())
       ..add(CardListView())
       ..add(CardStatisticsView())
-      ..add(ChatListView());
+      ..add(ChatView());
   }
 
   @override

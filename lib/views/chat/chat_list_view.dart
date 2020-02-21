@@ -3,41 +3,32 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:word_front_end/models/message_model.dart';
 import 'package:word_front_end/services/chat_service.dart';
 import 'package:word_front_end/services/config_service.dart';
 
 class ChatListView extends StatelessWidget {
   ConfigService get configService => GetIt.I<ConfigService>();
-
   ChatService get chatService => GetIt.I<ChatService>();
 
   bool isConnecting;
-
-  String selfId;
-  String peerId;
 
   File imageFile;
   bool isShowSticker;
   bool isLoading;
   String imageUrl;
 
-  final TextEditingController textEditingController =
-      new TextEditingController();
   final ScrollController listScrollController = new ScrollController();
 
   @override
   Widget build(BuildContext context) {
-    print("called build");
+    print("call chat list view build()");
     return _buildListMessage();
   }
 
   _buildListMessage() {
-    print("call _buildListMessage");
     return Flexible(
       child: StreamBuilder(
-        //TODO:stream:
         initialData: chatService.messageList,
         stream: chatService.getTheLatestMessageList(),
         builder: (context, snap) {
@@ -60,8 +51,7 @@ class ChatListView extends StatelessWidget {
 
   _buildItem(int index, MessageModel messageModel) {
     bool isRightSide = false;
-    if (messageModel.userId == selfId) isRightSide = true;
-    //my message
+    if (messageModel.userId == chatService.selfId) isRightSide = true;
     return Container(
       child: Row(
         mainAxisAlignment:

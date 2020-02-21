@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:mqtt_client/mqtt_client.dart';
@@ -14,6 +15,8 @@ class ChatService {
   String peerId = "1999";
 
   static bool save = true;
+
+  final messageStream = StreamController<List<MessageModel>>();
 
   ChatService() {
     client = MqttClient.withPort("47.103.194.29", "dart_test", 1883);
@@ -53,6 +56,20 @@ class ChatService {
         client.disconnect();
       }
     }
+
+    //使用自己创建的流来向chatView发送数据, 而不是使用mqtt包自带的流, 这就解决了重复注册的问题, 而且易于拓展
+    client.updates.map((List<MqttReceivedMessage<MqttMessage>> data) {
+      String re = "";
+      for (var item in data) {
+        final MqttPublishMessage mqttPublishMessage = item.payload;
+        String pt = Utf8Decoder().convert(mqttPublishMessage.payload.message);
+        re += pt;
+      }
+      return MessageModel.fromJson(jsonDecode(re));
+    }).listen((onData) {
+      messageList.insert(0, onData);
+      messageStream.sink.add(messageList);
+    });
   }
 
   void sendMessageModel(MessageModel messageModel) {
@@ -72,20 +89,7 @@ class ChatService {
 
   Stream<List<MessageModel>> getTheLatestMessageList() {
     print("registe fun: getTheLatestMessageList");
-    if (cnt == 0){
-      cnt++;
-      return null;
-    }
-    return client.updates.map((List<MqttReceivedMessage<MqttMessage>> data) {
-      String re = "";
-      for (var item in data) {
-        final MqttPublishMessage mqttPublishMessage = item.payload;
-        String pt = Utf8Decoder().convert(mqttPublishMessage.payload.message);
-        re += pt;
-      }
-      messageList.insert(0, MessageModel.fromJson(jsonDecode(re)));
-      return messageList;
-    });
+    return messageStream.stream;
   }
 
   void _onDisconnected() {
@@ -94,6 +98,7 @@ class ChatService {
       print('OnDisconnected callback is solicited, this is correct');
     }
     print(client.connectionStatus.returnCode);
+    messageStream.close();
   }
 
   void _onConnected() {

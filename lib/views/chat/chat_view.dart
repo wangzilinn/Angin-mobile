@@ -1,9 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:word_front_end/models/message_model.dart';
 import 'package:word_front_end/services/chat_service.dart';
 import 'package:word_front_end/services/config_service.dart';
+import 'package:word_front_end/views/chat/chat_input_view.dart';
 
 import 'chat_list_view.dart';
 
@@ -14,7 +13,17 @@ class ChatView extends StatefulWidget {
 
 class _ChatViewState extends State<ChatView> {
   ChatService get chatService => GetIt.I<ChatService>();
-  bool isLoading;
+
+  ConfigService get configService => GetIt.I<ConfigService>();
+
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    initChat();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,12 +43,8 @@ class _ChatViewState extends State<ChatView> {
                   children: <Widget>[
                     Column(
                       children: <Widget>[
-                        //TODO:List of message
-                        _buildListMessage(),
-                        //TODO:Sticker
-                        (isShowSticker ? _buildSticker() : Container()),
-                        //TODO:Input
-                        _buildInput(),
+                        ChatListView(),
+                        ChatInputView(),
                       ],
                     ),
                   ],
@@ -48,34 +53,25 @@ class _ChatViewState extends State<ChatView> {
         ));
   }
 
-  @override
-  void initState() {
-    super.initState();
-    isLoading = false;
-
-    //通知服务器开始聊天服务
-    initChat();
+  Future<bool> _onBackPress() {
+    print(("back"));
+    return Future.value(true); //+笔记
   }
 
   void initChat() async {
-    setState(() {
-      isLoading = true;
-    });
     await chatService.connect();
     setState(() {
       isLoading = false;
     });
   }
 
-  Future<bool> _onBackPress() {
-//    if (isShowSticker) {
-//      setState(() {
-//        isShowSticker = false;
-//      });
-//    } else {
-//      Navigator.pop(context); //+笔记
-//    }
-    print(("back"));
-    return Future.value(true); //+笔记
+  Widget _buildLoading() {
+    return Container(
+      child: Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(configService.colors[1]),
+        ),
+      ),
+    );
   }
 }
