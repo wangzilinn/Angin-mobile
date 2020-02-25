@@ -63,8 +63,8 @@ class _ChatInputViewState extends State<ChatInputView> {
     if (content.trim() != '') {
       textEditingController.clear();
     }
-    MessageModel messageModel =
-    MessageModel(chatService.selfId, messageType, content);
+    MessageModel messageModel = MessageModel(
+        chatService.selfId, chatService.peerId, messageType, content);
     chatService.sendMessageModel(messageModel);
   }
 

@@ -62,7 +62,7 @@ class _ChatViewState extends State<ChatView> {
     setState(() {
       isLoading = true;
     });
-    await chatService.connect();
+    await chatService.init();
     setState(() {
       isLoading = false;
     });

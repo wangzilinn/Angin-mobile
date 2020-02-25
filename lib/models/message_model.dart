@@ -1,22 +1,24 @@
 enum MessageType { String, Image, Sticker }
 
-class MessageModel{
+class MessageModel {
   String userId;
+  String peerId;
+  DateTime datetime;
   String _type;
   String content;
 
   get type {
     if (_type == "String") {
       return MessageType.String;
-    }else if (_type == "Image") {
+    } else if (_type == "Image") {
       return MessageType.Image;
-    }else if (_type == "Sticker") {
+    } else if (_type == "Sticker") {
       return MessageType.Sticker;
     }
   }
 
-  set type(MessageType messageType){
-    switch(messageType){
+  set type(MessageType messageType) {
+    switch (messageType) {
       case MessageType.String:
         _type = "String";
         break;
@@ -28,20 +30,30 @@ class MessageModel{
     }
   }
 
-  MessageModel(this.userId, MessageType messageType, this.content){
+  MessageModel.all(this.userId, this.peerId, MessageType messageType,
+      this.content, this.datetime) {
     this.type = messageType;
   }
 
-  MessageModel.fromJson(Map<String, dynamic> item){
+  MessageModel(
+      this.userId, this.peerId, MessageType messageType, this.content) {
+    this.type = messageType;
+    this.datetime = DateTime.now();
+  }
+
+  MessageModel.fromJson(Map<String, dynamic> item) {
     this.userId = item['userId'];
+    this.peerId = item['peerId'];
+    this.datetime = DateTime.parse(item["dateTime"]);
     this._type = item['type'];
     this.content = item['content'];
   }
 
-
-  Map<String, dynamic> toJson() =>{
-    'userId':userId,
-    'type':_type,
-    'content':content,
-  };
+  Map<String, dynamic> toJson() => {
+        'userId': userId,
+        'peerId': peerId,
+        'type': _type,
+        'content': content,
+        'dateTime': datetime.toUtc().toIso8601String(),
+      };
 }

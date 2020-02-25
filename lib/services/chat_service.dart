@@ -1,15 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:get_it/get_it.dart';
+import 'package:http/http.dart' as http;
 import 'package:mqtt_client/mqtt_client.dart';
+import 'package:word_front_end/models/data_response_model.dart';
 import 'package:word_front_end/models/message_model.dart';
+import 'package:word_front_end/services/mqtt_serivice.dart';
 
 class ChatService {
-  MqttClient client;
+  MqttService get mqttService => GetIt.I<MqttService>();
 
   List<MessageModel> messageList;
-
-  bool hasInitialized = false;
 
   String selfId = "1996";
   String peerId = "1999";
@@ -19,46 +21,50 @@ class ChatService {
   final messageStream = StreamController<List<MessageModel>>();
 
   ChatService() {
-    client = MqttClient.withPort("47.103.194.29", "dart_test", 1883);
+    messageList = List();
   }
 
-  connect() async {
-    //MQTT
-    client.keepAlivePeriod = 20; //20s
-    client.onDisconnected = _onDisconnected; //断开连接回调
-    client.onConnected = _onConnected;
-    client.onSubscribed = _onSubscribe;
-    client.pongCallback = _pong; //ping response call back
-
-    final MqttConnectMessage connectMessage = MqttConnectMessage()
-        .withClientIdentifier("phone1")
-        .keepAliveFor(20)
-        .withWillTopic("willTopic")
-        .withWillMessage("willMessage")
-        .withWillQos(MqttQos.exactlyOnce);
-
-    client.connectionMessage = connectMessage;
-
-    if (!hasInitialized) {
-      try {
-        //TODO:读取本地消息历史
-        //TODO:读取错过的消息
-        messageList = new List();
-        //连接并订阅主题
-        print("client connecting...");
-        await client.connect();
-        const String subTopic = 'chat';
-        client.subscribe(subTopic, MqttQos.exactlyOnce);
-        hasInitialized = true;
-      } on Exception catch (e) {
-        print(e);
-        print("出现错误, 断开连接");
-        client.disconnect();
+  Future<DataResponseModel<List<MessageModel>>> _getHistoryMessage() {
+    const API = "http://47.103.194.29:8080/";
+    const header = {'Content-Type': "application/json"};
+    String url = API + "getHistory";
+    return http.get(url, headers: header).then((data) {
+      if (data.statusCode == 200) {
+        var utf8decoder = new Utf8Decoder();
+        final jsonData = jsonDecode(utf8decoder.convert(data.bodyBytes));
+        final messages = <MessageModel>[];
+        for (var item in jsonData) {
+          MessageModel messageModel = MessageModel.fromJson(item);
+          messages.add(messageModel);
+        }
+        return DataResponseModel<List<MessageModel>>(data: messages);
       }
+      return DataResponseModel<List<MessageModel>>(
+          error: true, errorMessage: "Load message history failed");
+    });
+  }
+
+  init() async {
+    try {
+      //读取历史的消息
+      await _getHistoryMessage().then((response) {
+        if (!response.error) {
+          messageList.addAll(response.data);
+        } else {
+          return;
+        }
+      });
+      //连接MQTT服务
+      print("client connecting...");
+      await mqttService.init();
+      mqttService.subscribe("chat");
+    } on Exception catch (e) {
+      print(e);
+      print("初始化聊天服务错误");
     }
 
     //使用自己创建的流来向chatView发送数据, 而不是使用mqtt包自带的流, 这就解决了重复注册的问题, 而且易于拓展
-    client.updates.map((List<MqttReceivedMessage<MqttMessage>> data) {
+    mqttService.stream.map((List<MqttReceivedMessage<MqttMessage>> data) {
       String re = "";
       for (var item in data) {
         final MqttPublishMessage mqttPublishMessage = item.payload;
@@ -74,42 +80,11 @@ class ChatService {
 
   void sendMessageModel(MessageModel messageModel) {
     String json = jsonEncode(messageModel);
-    _sendString(json);
+    mqttService.publishString("chat", json);
   }
-
-  void _sendString(String string) {
-    const String pubTopic = 'chat';
-    final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
-    builder.addUTF8String(string);
-
-    client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload);
-  }
-
-  static var cnt = 0;
 
   Stream<List<MessageModel>> getTheLatestMessageList() {
     print("registe fun: getTheLatestMessageList");
     return messageStream.stream;
-  }
-
-  void _onDisconnected() {
-    print('OnDisconnected client callback - Client disconnection');
-    if (client.connectionStatus.returnCode == MqttConnectReturnCode.solicited) {
-      print('OnDisconnected callback is solicited, this is correct');
-    }
-    print(client.connectionStatus.returnCode);
-    messageStream.close();
-  }
-
-  void _onConnected() {
-    print('OnConnected client callback - Client connection was sucessful');
-  }
-
-  void _onSubscribe(String topic) {
-    print('Subscription confirmed for topic $topic');
-  }
-
-  void _pong() {
-    print('Ping response client callback invoked');
   }
 }

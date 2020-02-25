@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
+import 'package:http/http.dart' as http;
 import 'package:word_front_end/models/card_detail_model.dart';
 import 'package:word_front_end/models/card_title_model.dart';
 import 'package:word_front_end/models/data_response_model.dart';
-import 'package:http/http.dart' as http;
 import 'package:word_front_end/services/config_service.dart';
 import 'package:word_front_end/services/storage_service.dart';
 import 'package:word_front_end/views/card/card_delete_view.dart';
@@ -36,7 +36,7 @@ class CardService {
         return DataResponseModel<List<CardDetailModel>>(data: cards);
       }
       return DataResponseModel<List<CardDetailModel>>(
-          error: true, errorMessage: "An error occrooed");
+          error: true, errorMessage: "Load Card list failed");
     });
   }
 
