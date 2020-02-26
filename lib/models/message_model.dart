@@ -44,9 +44,10 @@ class MessageModel {
   MessageModel.fromJson(Map<String, dynamic> item) {
     this.userId = item['userId'];
     this.peerId = item['peerId'];
-    this.datetime = DateTime.parse(item["dateTime"]);
+    this.datetime = DateTime.parse(item["dateTime"]).toLocal();
     this._type = item['type'];
     this.content = item['content'];
+    print(this);
   }
 
   Map<String, dynamic> toJson() => {
@@ -56,4 +57,13 @@ class MessageModel {
         'content': content,
         'dateTime': datetime.toUtc().toIso8601String(),
       };
+
+  @override
+  String toString() {
+    return 'userId:$userId, '
+        'peerId:$peerId, '
+        'type:$_type, '
+        'content:$content, '
+        'dateTime:${datetime.toString()}';
+  }
 }

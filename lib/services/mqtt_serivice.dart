@@ -1,3 +1,4 @@
+import 'package:device_info/device_info.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 
 class MqttService {
@@ -9,6 +10,7 @@ class MqttService {
 
   init() async {
     if (hasInitialized) {
+      print(" 已经被初始化过, 直接返回");
       return;
     }
     globalQos = MqttQos.exactlyOnce;
@@ -20,8 +22,11 @@ class MqttService {
     client.onSubscribed = _onSubscribe;
     client.pongCallback = _pong; //ping response call back
 
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+
     final MqttConnectMessage connectMessage = MqttConnectMessage()
-        .withClientIdentifier("phone1")
+        .withClientIdentifier(androidInfo.id)
         .keepAliveFor(20)
         .withWillTopic("willTopic")
         .withWillMessage("willMessage")
@@ -30,6 +35,7 @@ class MqttService {
     client.connectionMessage = connectMessage;
 
     try {
+      print("开始连接");
       await client.connect();
       hasInitialized = true;
     } on Exception catch (e) {

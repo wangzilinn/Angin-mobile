@@ -13,8 +13,8 @@ class ChatService {
 
   List<MessageModel> messageList;
 
-  String selfId = "1996";
-  String peerId = "1999";
+  String selfId = "1999";
+  String peerId = "1996";
 
   static bool save = true;
 
@@ -35,7 +35,7 @@ class ChatService {
         final messages = <MessageModel>[];
         for (var item in jsonData) {
           MessageModel messageModel = MessageModel.fromJson(item);
-          messages.add(messageModel);
+          messages.insert(0, messageModel); //越晚的消息越在数组的上面
         }
         return DataResponseModel<List<MessageModel>>(data: messages);
       }
