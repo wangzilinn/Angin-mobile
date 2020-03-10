@@ -58,6 +58,7 @@ flutter:
     - lib/assets/images/mimi1.gif
     - lib/assets/images/mimi2.gif
     - lib/assets/images/mimi3.gif
+    - lib/assets/certs/chat_cert.pem
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

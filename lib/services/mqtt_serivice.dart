@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:device_info/device_info.dart';
+import 'package:flutter/services.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 
 class MqttService {
@@ -15,12 +19,23 @@ class MqttService {
     }
     globalQos = MqttQos.exactlyOnce;
 
-    client = MqttClient.withPort("47.103.194.29", "dart_test", 1883);
+    client = MqttClient.withPort("47.103.194.29", "dart_test", 8883);
     client.keepAlivePeriod = 20; //20s
     client.onDisconnected = _onDisconnected; //断开连接回调
     client.onConnected = _onConnected;
     client.onSubscribed = _onSubscribe;
     client.pongCallback = _pong; //ping response call back
+    client.secure = true;
+
+    //secure config
+    final SecurityContext securityContext = SecurityContext.defaultContext;
+    String cert = await rootBundle.loadString("lib/assets/certs/chat_cert.pem");
+    securityContext.setTrustedCertificatesBytes(Utf8Encoder().convert(cert));
+    client.securityContext = securityContext;
+//    client.onBadCertificate = ((X509Certificate cert, String host, int port) {
+//      final isValidHost = host == "api.my_app";
+//      return isValidHost;
+//    });
 
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
