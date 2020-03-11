@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:word_front_end/models/message_model.dart';
-import 'package:word_front_end/services/chat_service.dart';
-import 'package:word_front_end/services/config_service.dart';
+import 'package:word_front_end/services/application/chat_service.dart';
+import 'package:word_front_end/services/application/config_service.dart';
 
 class ChatInputView extends StatefulWidget {
   @override

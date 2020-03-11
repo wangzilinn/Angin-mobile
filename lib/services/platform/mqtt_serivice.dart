@@ -32,10 +32,6 @@ class MqttService {
     String cert = await rootBundle.loadString("lib/assets/certs/chat_cert.pem");
     securityContext.setTrustedCertificatesBytes(Utf8Encoder().convert(cert));
     client.securityContext = securityContext;
-//    client.onBadCertificate = ((X509Certificate cert, String host, int port) {
-//      final isValidHost = host == "api.my_app";
-//      return isValidHost;
-//    });
 
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;

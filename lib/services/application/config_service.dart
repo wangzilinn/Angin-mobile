@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:word_front_end/models/local_status_model.dart';
-import 'package:word_front_end/services/storage_service.dart';
+import 'package:word_front_end/services/platform/storage_service.dart';
 
 class ConfigService {
   static const CONFIG_FILE_NAME = "config";

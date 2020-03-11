@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:word_front_end/services/config_service.dart';
+import 'package:word_front_end/services/application/config_service.dart';
 
 class ProfileSettingsView extends StatefulWidget {
   @override

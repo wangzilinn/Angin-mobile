@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:word_front_end/models/card_detail_model.dart';
-import 'package:word_front_end/services/card_service.dart';
+import 'package:word_front_end/services/application/card_service.dart';
 
 class CardDetailView extends StatefulWidget {
   CardDetailModel _displayedCardModel;

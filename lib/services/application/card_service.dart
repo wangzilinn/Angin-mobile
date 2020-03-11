@@ -2,32 +2,34 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
-import 'package:http/http.dart' as http;
 import 'package:word_front_end/models/card_detail_model.dart';
 import 'package:word_front_end/models/card_title_model.dart';
 import 'package:word_front_end/models/data_response_model.dart';
-import 'package:word_front_end/services/config_service.dart';
-import 'package:word_front_end/services/storage_service.dart';
+import 'package:word_front_end/services/application/config_service.dart';
+import 'package:word_front_end/services/platform/http_service.dart';
+import 'package:word_front_end/services/platform/storage_service.dart';
 import 'package:word_front_end/views/card/card_delete_view.dart';
 
 class CardService {
-  static const API = "http://47.103.194.29:8080/";
-  static const header = {'Content-Type': "application/json"};
   static const CARD_LIST_FILE_NAME = "card_list";
 
   List<CardDetailModel> _cardList;
   int _currentCardIndex;
 
   ConfigService get configService => GetIt.I<ConfigService>();
+
   StorageService get storageService => GetIt.I<StorageService>();
+
+  HttpService get httpService => GetIt.I<HttpService>();
 
   Future<DataResponseModel<List<CardDetailModel>>> _getDBCardList(
       {@required int reciteCardNumber, @required int newCardNumber}) {
-    String url = API + "/getTodayCards/$reciteCardNumber/$newCardNumber";
-    return http.get(url, headers: header).then((data) {
+    String api = "getTodayCards/$reciteCardNumber/$newCardNumber";
+    return httpService.get(api).then((data) {
       if (data.statusCode == 200) {
         var utf8decoder = new Utf8Decoder();
-        final jsonData = jsonDecode(utf8decoder.convert(data.bodyBytes));//change from json.decode
+        final jsonData = jsonDecode(
+            utf8decoder.convert(data.bodyBytes)); //change from json.decode
         final cards = <CardDetailModel>[];
         for (var item in jsonData) {
           CardDetailModel displayedCardModel = CardDetailModel.fromJson(item);
@@ -42,8 +44,8 @@ class CardService {
 
   Future<void> updateDBCardStatus(String key, String option) {
     var index = _currentCardIndex; //先获得索引, 防止异步函数等待回调期间索引改变
-    String url = API + "/updateCardStatus/$key/$option";
-    return http.get(url, headers: header).then((data) {
+    String api = "updateCardStatus/$key/$option";
+    return httpService.get(api).then((data) {
       if (data.statusCode == 200) {
         var utf8decoder = new Utf8Decoder();
         final jsonData = json.decode(utf8decoder.convert(data.bodyBytes));
@@ -67,7 +69,7 @@ class CardService {
 
   Future<void> updateCardDetails(CardDetailModel cardDetailModel) {
     var index = _currentCardIndex; //先获得索引, 防止异步函数等待回调期间索引改变(其实这里用不着,不过以防万一
-    String url = API + "/updateCardDetail/${cardDetailModel.key}";
+    String api = "updateCardDetail/${cardDetailModel.key}";
     //先更新本地列表
     assert(_cardList[index].key == cardDetailModel.key);
     _cardList[index].front = cardDetailModel.front;
@@ -75,7 +77,7 @@ class CardService {
     //再更新数据库
     Map<String, dynamic> cardDetailJson = cardDetailModel.outlineToJson();
     String body = json.encode(cardDetailJson);
-    return http.put(url, headers: header, body: body).then((data) {
+    return httpService.put(api, body: body).then((data) {
       if (data.statusCode == 200) {
         print('update detail Successfully');
       } else {
@@ -85,8 +87,8 @@ class CardService {
   }
 
   Future<void> _deleteDBCard(String key) {
-    String url = API + "/deleteCard/$key";
-    return http.delete(url, headers: header).then((data) {
+    String api = "deleteCard/$key";
+    return httpService.delete(api).then((data) {
       if (data.statusCode == 200) {
         print('delete Successfully');
       } else {
@@ -118,7 +120,8 @@ class CardService {
         }
       });
       _saveCardList();
-    }else{//如果本地已经有数据了
+    } else {
+      //如果本地已经有数据了
       print("从本地拉取数据");
       _cardList = await _readLocalCardList();
     }
@@ -167,7 +170,7 @@ class CardService {
     storageService.writeFile(CARD_LIST_FILE_NAME, json);
   }
 
-  Future<List<CardDetailModel>> _readLocalCardList() async{
+  Future<List<CardDetailModel>> _readLocalCardList() async {
 //    String st = r'[{"key":"exact","front":"\"\"<br/> The exact locations are being kept secret for reasons of security.&nbsp;\"\" <br/>Root:<br/>ex-, 外。-act, 做，驱使，称量，词源同act, examine, exigent. 即称量的，精确要求的。\"","back":"\"adj.准的，精密的；精确的vt.要求；强求；急需vi.勒索钱财<div><span style=\"\"color: rgb(255, 255, 255)\"\">确切地点因为安全原因要保密。</span></div>\"","expireDate":"2020-02-03 18:42:49","options":["一点没印象","没啥印象"]}]';
 
     final jsonString = await storageService.readFile(CARD_LIST_FILE_NAME);

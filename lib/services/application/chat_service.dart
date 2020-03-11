@@ -2,14 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:get_it/get_it.dart';
-import 'package:http/http.dart' as http;
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:word_front_end/models/data_response_model.dart';
 import 'package:word_front_end/models/message_model.dart';
-import 'package:word_front_end/services/mqtt_serivice.dart';
+import 'package:word_front_end/services/platform/http_service.dart';
+import 'package:word_front_end/services/platform/mqtt_serivice.dart';
 
 class ChatService {
   MqttService get mqttService => GetIt.I<MqttService>();
+
+  HttpService get httpService => GetIt.I<HttpService>();
 
   List<MessageModel> messageList;
 
@@ -25,10 +27,8 @@ class ChatService {
   }
 
   Future<DataResponseModel<List<MessageModel>>> _getHistoryMessage() {
-    const API = "http://47.103.194.29:8080/";
-    const header = {'Content-Type': "application/json"};
-    String url = API + "getHistory";
-    return http.get(url, headers: header).then((data) {
+    String api = "getHistory";
+    return httpService.get(api).then((data) {
       if (data.statusCode == 200) {
         var utf8decoder = new Utf8Decoder();
         final jsonData = jsonDecode(utf8decoder.convert(data.bodyBytes));
