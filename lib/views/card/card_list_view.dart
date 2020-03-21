@@ -61,36 +61,34 @@ class _CardListViewState extends State<CardListView> {
                     direction: DismissDirection.horizontal,
                     confirmDismiss: (direction) =>
                         _confirmDismiss(direction, index),
-                    background: Container(child: Builder(builder: (_) {
-                      return Container(
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                          colors: [Theme.of(context).primaryColor, Colors.red],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        )),
-                        padding: EdgeInsets.only(left: 16, right: 16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Align(
-                              child: Icon(
-                                Icons.details,
-                                color: Colors.white,
-                              ),
-                              alignment: Alignment.centerLeft,
+                    background: Container(
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                        colors: [Theme.of(context).primaryColor, Colors.red],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      )),
+                      padding: EdgeInsets.only(left: 16, right: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Align(
+                            child: Icon(
+                              Icons.details,
+                              color: Colors.white,
                             ),
-                            Align(
-                              child: Icon(
-                                Icons.delete,
-                                color: Colors.white,
-                              ),
-                              alignment: Alignment.centerRight,
+                            alignment: Alignment.centerLeft,
+                          ),
+                          Align(
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.white,
                             ),
-                          ],
-                        ),
-                      );
-                    })),
+                            alignment: Alignment.centerRight,
+                          ),
+                        ],
+                      ),
+                    ),
                     child: ListTile(
                       title: Text(cardTitle.key,
                           style: TextStyle(

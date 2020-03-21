@@ -16,12 +16,18 @@ class _ChatViewState extends State<ChatView> {
 
   ConfigService get configService => GetIt.I<ConfigService>();
 
-  bool isLoading;
+  bool _isLoading;
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
-    initChat();
+    setState(() {
+      _isLoading = true;
+    });
+    await chatService.refreshChat();
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -37,7 +43,7 @@ class _ChatViewState extends State<ChatView> {
           ),
         ),
         body: WillPopScope(
-          child: isLoading
+          child: _isLoading
               ? _buildLoading()
               : Stack(
                   children: <Widget>[
@@ -58,15 +64,6 @@ class _ChatViewState extends State<ChatView> {
     return Future.value(true); //+笔记
   }
 
-  void initChat() async {
-    setState(() {
-      isLoading = true;
-    });
-    await chatService.init();
-    setState(() {
-      isLoading = false;
-    });
-  }
 
   Widget _buildLoading() {
     return Container(

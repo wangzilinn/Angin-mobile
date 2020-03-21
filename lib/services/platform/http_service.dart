@@ -9,6 +9,7 @@ class HttpService {
   static const PORT = "8443";
   static const header = {'Content-Type': "application/json"};
 
+  //私有证书验证
   static bool _certificateCheck(X509Certificate cert, String host, int port) =>
       host == '47.103.194.29';
 
@@ -16,7 +17,7 @@ class HttpService {
     ..badCertificateCallback = _certificateCheck;
   var _client = IOClient(ioClient);
 
-  get url => HOST + "/" + PORT + "/";
+  get url => HOST + ":" + PORT + "/";
 
   Future<Response> get(dynamic api, {Map<String, String> headers}) {
     if (headers == null) headers = header;

@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:word_front_end/models/data_response_model.dart';
 import 'package:word_front_end/models/message_model.dart';
+import 'package:word_front_end/models/requset_data_model.dart';
 import 'package:word_front_end/services/platform/http_service.dart';
 import 'package:word_front_end/services/platform/mqtt_serivice.dart';
 
@@ -14,9 +15,11 @@ class ChatService {
   HttpService get httpService => GetIt.I<HttpService>();
 
   List<MessageModel> messageList;
+  List<String> channelList;
 
-  String selfId = "1999";
-  String peerId = "1996";
+  String selfId = "1996";
+  String password = "19961112w";
+  String peerId = "1999";
 
   static bool save = true;
 
@@ -24,6 +27,7 @@ class ChatService {
 
   ChatService() {
     messageList = List();
+    channelList = List();
   }
 
   Future<DataResponseModel<List<MessageModel>>> _getHistoryMessage() {
@@ -44,7 +48,16 @@ class ChatService {
     });
   }
 
-  init() async {
+  refreshChannelList() async {
+    var userChannel = await _fetchUserChannel();
+    if (!userChannel.error) {
+      channelList = userChannel.data;
+    } else {
+      print("获得channel失败");
+    }
+  }
+
+  refreshChat() async {
     try {
       //读取历史的消息
       await _getHistoryMessage().then((response) {
@@ -86,5 +99,21 @@ class ChatService {
   Stream<List<MessageModel>> getTheLatestMessageList() {
     print("registe fun: getTheLatestMessageList");
     return messageStream.stream;
+  }
+
+  Future<DataResponseModel<List<String>>> _fetchUserChannel() {
+    String api = "userChannelList";
+    RequestDataModel requestDataModel =
+        RequestDataModel(userId: selfId, password: password);
+    return httpService
+        .post(api, body: requestDataModel.toString())
+        .then((data) {
+      if (data.statusCode == 200) {
+        final jsonData = jsonDecode(Utf8Decoder().convert(data.bodyBytes));
+        return DataResponseModel<List<String>>(data: List());
+      }
+      return DataResponseModel<List<String>>(
+          error: true, errorMessage: "Load user channel failed");
+    });
   }
 }
