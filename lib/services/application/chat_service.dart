@@ -17,9 +17,9 @@ class ChatService {
   List<MessageModel> messageList;
   List<String> channelList;
 
-  String selfId = "1996";
+  String selfId = "wangzilin";
   String password = "19961112w";
-  String peerId = "1999";
+  String peerId = "huangyiqin";
 
   static bool save = true;
 
@@ -110,7 +110,9 @@ class ChatService {
         .then((data) {
       if (data.statusCode == 200) {
         final jsonData = jsonDecode(Utf8Decoder().convert(data.bodyBytes));
-        return DataResponseModel<List<String>>(data: List());
+
+        return DataResponseModel<List<String>>(
+            data: List<String>.from(jsonData));
       }
       return DataResponseModel<List<String>>(
           error: true, errorMessage: "Load user channel failed");

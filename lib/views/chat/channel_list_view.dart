@@ -12,15 +12,9 @@ class _ChannelListViewState extends State<ChannelListView> {
   bool _isLoading;
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-    setState(() {
-      _isLoading = true;
-    });
-    await chatService.refreshChannelList();
-    setState(() {
-      _isLoading = false;
-    });
+    _onRefresh();
   }
 
   @override
@@ -30,7 +24,7 @@ class _ChannelListViewState extends State<ChannelListView> {
         title: Text("Channel list"),
       ),
       body: RefreshIndicator(
-        onRefresh: _onRefresh(),
+        onRefresh: _onRefresh,
         child: Builder(
           builder: (_) {
             if (_isLoading) {
@@ -94,8 +88,14 @@ class _ChannelListViewState extends State<ChannelListView> {
     );
   }
 
-  _onRefresh() async {
+  Future<void> _onRefresh() async {
+    setState(() {
+      _isLoading = true;
+    });
     await chatService.refreshChannelList();
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   _confirmDismiss(direction, int index) {

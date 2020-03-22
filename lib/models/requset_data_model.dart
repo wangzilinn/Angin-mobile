@@ -11,10 +11,10 @@ class RequestDataModel {
       {@required this.userId, @required this.password, this.channelName});
 
   Map<String, dynamic> toJson() {
-    Map mainData = {'userId': userId, 'password': password};
+    Map<String, dynamic> mainData = {'userId': userId, 'password': password};
 
-    Map additionalData = Map();
-    additionalData.addEntries(mainData.entries);
+    Map additionalData = Map<String, dynamic>();
+    additionalData.addAll(mainData);
     if (channelName != null) additionalData["channelName"] = channelName;
     return additionalData;
   }
