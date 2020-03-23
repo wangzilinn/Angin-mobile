@@ -5,7 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:word_front_end/models/card_detail_model.dart';
 import 'package:word_front_end/models/card_title_model.dart';
 import 'package:word_front_end/models/data_response_model.dart';
-import 'package:word_front_end/services/application/config_service.dart';
+import 'package:word_front_end/services/application/user_service.dart';
 import 'package:word_front_end/services/platform/http_service.dart';
 import 'package:word_front_end/services/platform/storage_service.dart';
 import 'package:word_front_end/views/card/card_delete_view.dart';
@@ -16,7 +16,7 @@ class CardService {
   List<CardDetailModel> _cardList;
   int _currentCardIndex;
 
-  ConfigService get configService => GetIt.I<ConfigService>();
+  UserService get configService => GetIt.I<UserService>();
 
   StorageService get storageService => GetIt.I<StorageService>();
 
@@ -50,7 +50,7 @@ class CardService {
         var utf8decoder = new Utf8Decoder();
         final jsonData = json.decode(utf8decoder.convert(data.bodyBytes));
         CardDetailModel displayedCardModel = CardDetailModel.fromJson(jsonData,
-            deadline: configService.settings.deadline);
+            deadline: configService.settings["deadline"]);
         //从原始列表中更新新获得的卡片的选项和过期时间.
         assert(_cardList[index].key == displayedCardModel.key);
         //判断这个卡片是不是超出了当日过期时间,超过则从列表中删除
@@ -98,11 +98,11 @@ class CardService {
   }
 
   Future<void> fetchTodayCardList() async {
-    var maxNewCardNumber = configService.settings.maxNewCardNumber;
-    var maxReciteCardNumber = configService.settings.maxReciteCardNumber;
+    var maxNewCardNumber = configService.settings["maxNewCardNumber"];
+    var maxReciteCardNumber = configService.settings["maxReciteCardNumber"];
 
     bool alreadyFetchedTodayCardList =
-        configService.settings.alreadyFetchedTodayCardList;
+        configService.settings["alreadyFetchedTodayCardList"];
 
     if (!alreadyFetchedTodayCardList) {
       print("从服务器拉取数据");
@@ -112,7 +112,7 @@ class CardService {
           .then((response) {
         if (!response.error) {
           //已经从服务器获取了今天的单词列表,不在从服务器重新获取
-          configService.settings.alreadyFetchedTodayCardList = true;
+          configService.settings["alreadyFetchedTodayCardList"] = true;
           return response.data;
         } else {
           print("未能获取服务器数据");

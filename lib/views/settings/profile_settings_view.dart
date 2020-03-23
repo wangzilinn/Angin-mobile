@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:word_front_end/services/application/config_service.dart';
+import 'package:word_front_end/services/application/user_service.dart';
 
 class ProfileSettingsView extends StatefulWidget {
   @override
@@ -8,7 +8,7 @@ class ProfileSettingsView extends StatefulWidget {
 }
 
 class _ProfileSettingsViewState extends State<ProfileSettingsView> {
-  ConfigService get configService => GetIt.I<ConfigService>();
+  UserService get configService => GetIt.I<UserService>();
 
   @override
   Widget build(BuildContext context) {

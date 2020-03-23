@@ -5,18 +5,17 @@ import 'package:flutter/cupertino.dart';
 class RequestDataModel {
   String userId;
   String password;
-  String channelName;
+  Map<String, dynamic> additionalData;
 
   RequestDataModel(
-      {@required this.userId, @required this.password, this.channelName});
+      {@required this.userId, @required this.password, this.additionalData});
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> mainData = {'userId': userId, 'password': password};
-
-    Map additionalData = Map<String, dynamic>();
-    additionalData.addAll(mainData);
-    if (channelName != null) additionalData["channelName"] = channelName;
-    return additionalData;
+    Map<String, dynamic> data = {'userId': userId, 'password': password};
+    if (additionalData != null) {
+      data.addAll(additionalData);
+    }
+    return data;
   }
 
   @override

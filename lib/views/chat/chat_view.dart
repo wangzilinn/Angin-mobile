@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:word_front_end/services/application/chat_service.dart';
-import 'package:word_front_end/services/application/config_service.dart';
+import 'package:word_front_end/services/application/user_service.dart';
 import 'package:word_front_end/views/chat/chat_input_view.dart';
 
 import 'messages_list_view.dart';
@@ -14,7 +14,7 @@ class ChatView extends StatefulWidget {
 class _ChatViewState extends State<ChatView> {
   ChatService get chatService => GetIt.I<ChatService>();
 
-  ConfigService get configService => GetIt.I<ConfigService>();
+  UserService get configService => GetIt.I<UserService>();
 
   bool _isLoading;
 
@@ -69,7 +69,8 @@ class _ChatViewState extends State<ChatView> {
     return Container(
       child: Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(configService.colors[1]),
+          valueColor: AlwaysStoppedAnimation<Color>(
+              configService.settings["colors"][1]),
         ),
       ),
     );

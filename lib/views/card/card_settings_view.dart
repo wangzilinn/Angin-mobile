@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:word_front_end/services/application/config_service.dart';
+import 'package:word_front_end/services/application/user_service.dart';
 
 class CardSettingsView extends StatefulWidget {
   @override
@@ -9,7 +9,7 @@ class CardSettingsView extends StatefulWidget {
 }
 
 class _CardSettingsViewState extends State<CardSettingsView> {
-  ConfigService get configService => GetIt.I<ConfigService>();
+  UserService get configService => GetIt.I<UserService>();
 
   TextEditingController _maxReciteCardNumberController =
       TextEditingController();
@@ -19,9 +19,9 @@ class _CardSettingsViewState extends State<CardSettingsView> {
   void initState() {
     super.initState();
     _maxNewCardNumberController.text =
-        configService.settings.maxReciteCardNumber.toString();
+        configService.settings["maxReciteCardNumber"].toString();
     _maxReciteCardNumberController.text =
-        configService.settings.maxNewCardNumber.toString();
+        configService.settings["maxNewCardNumber"].toString();
   }
 
   @override
@@ -95,7 +95,7 @@ class _CardSettingsViewState extends State<CardSettingsView> {
                     ),
                     color: Theme.of(context).primaryColorLight,
                     onPressed: () {
-                      configService.settings.alreadyFetchedTodayCardList =
+                      configService.settings["alreadyFetchedTodayCardList"] =
                           false;
                       Scaffold.of(context).showSnackBar(SnackBar(
                         backgroundColor: Theme.of(context).primaryColor,
@@ -114,16 +114,16 @@ class _CardSettingsViewState extends State<CardSettingsView> {
   }
 
   void _updateMaxReciteCardNumber(int newValue) {
-    configService.updateSettings(maxReciteCardNumber: newValue);
+    configService.updateSetting("maxReciteCardNumber", newValue);
   }
 
   void _updateMaxNewCardNumber(int newValue) {
-    configService.updateSettings(maxNewCardNumber: newValue);
+    configService.updateSetting("maxNewCardNumber", newValue);
   }
 
   void _showDeadlineTimePicker() async {
     var deadline =
-        await showTimePicker(context: context, initialTime: TimeOfDay.now());
-    configService.updateSettings(deadline: deadline);
+    await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    configService.updateSetting("deadline", deadline);
   }
 }

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
 class StorageService{
-
   void writeFile(String fileName, String data) async {
     Directory documentsDir = await getApplicationDocumentsDirectory();
     String documentsPath = documentsDir.path;

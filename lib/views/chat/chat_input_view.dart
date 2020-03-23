@@ -5,7 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:word_front_end/models/message_model.dart';
 import 'package:word_front_end/services/application/chat_service.dart';
-import 'package:word_front_end/services/application/config_service.dart';
+import 'package:word_front_end/services/application/user_service.dart';
 
 class ChatInputView extends StatefulWidget {
   @override
@@ -18,7 +18,7 @@ class _ChatInputViewState extends State<ChatInputView> {
       new TextEditingController();
   final ScrollController listScrollController = new ScrollController();
 
-  ConfigService get configService => GetIt.I<ConfigService>();
+  UserService get configService => GetIt.I<UserService>();
 
   ChatService get chatService => GetIt.I<ChatService>();
 
@@ -134,7 +134,7 @@ class _ChatInputViewState extends State<ChatInputView> {
               child: IconButton(
                 icon: Icon(Icons.image),
                 onPressed: _getImage,
-                color: configService.colors[0],
+                color: configService.settings["colors"][0],
               ),
             ),
           ),
@@ -166,10 +166,9 @@ class _ChatInputViewState extends State<ChatInputView> {
               margin: EdgeInsets.symmetric(horizontal: 8.0),
               child: IconButton(
                 icon: Icon(Icons.send),
-                onPressed: () =>
-                    _onSendMessage(
-                        textEditingController.text, MessageType.String),
-                color: configService.colors[0],
+                onPressed: () => _onSendMessage(
+                    textEditingController.text, MessageType.String),
+                color: configService.settings["colors"][0],
               ),
             ),
             color: Colors.white,

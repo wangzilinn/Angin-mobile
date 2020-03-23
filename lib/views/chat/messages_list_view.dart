@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:word_front_end/models/message_model.dart';
 import 'package:word_front_end/services/application/chat_service.dart';
-import 'package:word_front_end/services/application/config_service.dart';
+import 'package:word_front_end/services/application/user_service.dart';
 
 class MessagesListView extends StatelessWidget {
-  ConfigService get configService => GetIt.I<ConfigService>();
+  UserService get configService => GetIt.I<UserService>();
 
   ChatService get chatService => GetIt.I<ChatService>();
 
@@ -67,7 +67,7 @@ class MessagesListView extends StatelessWidget {
                     padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                     width: 200.0,
                     decoration: BoxDecoration(
-                        color: configService.colors[2],
+                        color: configService.settings["colors"][2],
                         borderRadius: BorderRadius.circular(8.0)),
                     margin: isRightSide
                         ? EdgeInsets.only(bottom: 10.0, right: 10.0)
@@ -81,7 +81,7 @@ class MessagesListView extends StatelessWidget {
                           placeholder: (context, url) => Container(
                             child: CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                  configService.colors[1]),
+                                  configService.settings["colors"][1]),
                             ),
                             width: 200.0,
                             height: 200.0,

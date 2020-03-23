@@ -4,7 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:word_front_end/models/card_detail_model.dart';
 import 'package:word_front_end/models/card_title_model.dart';
 import 'package:word_front_end/services/application/card_service.dart';
-import 'package:word_front_end/services/application/config_service.dart';
+import 'package:word_front_end/services/application/user_service.dart';
 import 'package:word_front_end/views/card/card_delete_view.dart';
 import 'package:word_front_end/views/card/card_detail_view.dart';
 import 'package:word_front_end/views/card/card_edit_view.dart';
@@ -17,7 +17,7 @@ class CardListView extends StatefulWidget {
 class _CardListViewState extends State<CardListView> {
   CardService get cardService => GetIt.I<CardService>();
 
-  ConfigService get configService => GetIt.I<ConfigService>();
+  UserService get userService => GetIt.I<UserService>();
 
   bool _isLoading = false;
 
@@ -133,7 +133,7 @@ class _CardListViewState extends State<CardListView> {
       _isLoading = true;
     });
 
-    await configService.readLocalStatusFile(); //启动软件时先从本地读取配置数据
+    await userService.readLocalStatusFile(); //启动软件时先从本地读取配置数据
     await cardService.fetchTodayCardList();
 
     setState(() {

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:get_it/get_it.dart';
-import 'package:word_front_end/services/application/config_service.dart';
+import 'package:word_front_end/services/application/user_service.dart';
 
 class CardPaletteView extends StatefulWidget {
   @override
@@ -10,7 +10,7 @@ class CardPaletteView extends StatefulWidget {
 }
 
 class _CardPaletteViewState extends State<CardPaletteView> {
-  ConfigService get configService => GetIt.I<ConfigService>();
+  UserService get configService => GetIt.I<UserService>();
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class _CardPaletteViewState extends State<CardPaletteView> {
                 return ClipRRect(
                   borderRadius: BorderRadius.circular(16.0),
                   child: Container(
-                    color: configService.colors[index],
+                    color: configService.settings["colors"][index],
                     child: Padding(
                       padding: const EdgeInsets.all(30.0),
                       child: Column(
