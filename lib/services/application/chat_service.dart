@@ -3,22 +3,25 @@ import 'dart:convert';
 
 import 'package:get_it/get_it.dart';
 import 'package:mqtt_client/mqtt_client.dart';
+import 'package:word_front_end/models/data_request_model.dart';
 import 'package:word_front_end/models/data_response_model.dart';
 import 'package:word_front_end/models/message_model.dart';
-import 'package:word_front_end/models/requset_data_model.dart';
+import 'package:word_front_end/services/application/user_service.dart';
 import 'package:word_front_end/services/platform/http_service.dart';
 import 'package:word_front_end/services/platform/mqtt_serivice.dart';
 
 class ChatService {
   MqttService get mqttService => GetIt.I<MqttService>();
 
+  UserService get userService => GetIt.I<UserService>();
+
   HttpService get httpService => GetIt.I<HttpService>();
 
   List<MessageModel> messageList;
   List<String> channelList;
 
-  String selfId = "wangzilin";
-  String password = "19961112w";
+  String selfId;
+  String password;
   String peerId = "huangyiqin";
 
   static bool save = true;
@@ -28,6 +31,8 @@ class ChatService {
   ChatService() {
     messageList = List();
     channelList = List();
+    selfId = userService.settings["userId"];
+    password = userService.settings["password"];
   }
 
   Future<DataResponseModel<List<MessageModel>>> _getHistoryMessage() {
@@ -103,8 +108,8 @@ class ChatService {
 
   Future<DataResponseModel<List<String>>> _fetchUserChannel() {
     String api = "userChannelList";
-    RequestDataModel requestDataModel =
-        RequestDataModel(userId: selfId, password: password);
+    DataRequestModel requestDataModel =
+    DataRequestModel(selfId, password);
     return httpService
         .post(api, body: requestDataModel.toString())
         .then((data) {

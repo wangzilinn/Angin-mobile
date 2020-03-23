@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:word_front_end/models/card_detail_model.dart';
 import 'package:word_front_end/models/card_title_model.dart';
+import 'package:word_front_end/models/data_request_model.dart';
 import 'package:word_front_end/models/data_response_model.dart';
 import 'package:word_front_end/services/application/user_service.dart';
 import 'package:word_front_end/services/platform/http_service.dart';
@@ -11,20 +12,34 @@ import 'package:word_front_end/services/platform/storage_service.dart';
 import 'package:word_front_end/views/card/card_delete_view.dart';
 
 class CardService {
-  static const CARD_LIST_FILE_NAME = "card_list";
-
-  List<CardDetailModel> _cardList;
-  int _currentCardIndex;
-
   UserService get configService => GetIt.I<UserService>();
 
   StorageService get storageService => GetIt.I<StorageService>();
 
   HttpService get httpService => GetIt.I<HttpService>();
 
+  UserService get userService => GetIt.I<UserService>();
+
+  static const CARD_LIST_FILE_NAME = "card_list";
+
+  List<CardDetailModel> _cardList;
+  int _currentCardIndex;
+  String userId;
+  String password;
+
+  CardService() {
+    userId = userService.settings["userId"];
+    password = userService.settings["password"];
+  }
+
+
+  //从网络获得今日背单词列表
   Future<DataResponseModel<List<CardDetailModel>>> _getDBCardList(
       {@required int reciteCardNumber, @required int newCardNumber}) {
-    String api = "getTodayCards/$reciteCardNumber/$newCardNumber";
+    String api = "todayCards";
+    Map params = {"expiredLimit": reciteCardNumber, "newLimit": newCardNumber};
+
+    DataRequestModel(userId, password)
     return httpService.get(api).then((data) {
       if (data.statusCode == 200) {
         var utf8decoder = new Utf8Decoder();
@@ -102,13 +117,13 @@ class CardService {
     var maxReciteCardNumber = configService.settings["maxReciteCardNumber"];
 
     bool alreadyFetchedTodayCardList =
-        configService.settings["alreadyFetchedTodayCardList"];
+    configService.settings["alreadyFetchedTodayCardList"];
 
     if (!alreadyFetchedTodayCardList) {
       print("从服务器拉取数据");
       _cardList = await _getDBCardList(
-              reciteCardNumber: maxReciteCardNumber,
-              newCardNumber: maxNewCardNumber)
+          reciteCardNumber: maxReciteCardNumber,
+          newCardNumber: maxNewCardNumber)
           .then((response) {
         if (!response.error) {
           //已经从服务器获取了今天的单词列表,不在从服务器重新获取

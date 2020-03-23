@@ -1,14 +1,11 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
-
-class RequestDataModel {
+class DataRequestModel {
   String userId;
   String password;
   Map<String, dynamic> additionalData;
 
-  RequestDataModel(
-      {@required this.userId, @required this.password, this.additionalData});
+  DataRequestModel(this.userId, this.password, {this.additionalData});
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> data = {'userId': userId, 'password': password};
