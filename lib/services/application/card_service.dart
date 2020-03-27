@@ -38,9 +38,9 @@ class CardService {
       {@required int reciteCardNumber, @required int newCardNumber}) {
     String api = "todayCards";
     Map params = {"expiredLimit": reciteCardNumber, "newLimit": newCardNumber};
-
-    DataRequestModel(userId, password)
-    return httpService.get(api).then((data) {
+    var requestBody =
+        DataRequestModel(userId, password, additionalData: params);
+    return httpService.post(api, body: requestBody).then((data) {
       if (data.statusCode == 200) {
         var utf8decoder = new Utf8Decoder();
         final jsonData = jsonDecode(
@@ -57,10 +57,14 @@ class CardService {
     });
   }
 
+  //更新卡片状态
   Future<void> updateDBCardStatus(String key, String option) {
     var index = _currentCardIndex; //先获得索引, 防止异步函数等待回调期间索引改变
-    String api = "updateCardStatus/$key/$option";
-    return httpService.get(api).then((data) {
+    String api = "cardStatus";
+    Map params = {"key": key, "status": option};
+    var requestBody = DataRequestModel(
+        userId, password, additionalData: params);
+    return httpService.post(api, body: requestBody).then((data) {
       if (data.statusCode == 200) {
         var utf8decoder = new Utf8Decoder();
         final jsonData = json.decode(utf8decoder.convert(data.bodyBytes));
@@ -82,17 +86,19 @@ class CardService {
     });
   }
 
+  //更新卡片内容
   Future<void> updateCardDetails(CardDetailModel cardDetailModel) {
     var index = _currentCardIndex; //先获得索引, 防止异步函数等待回调期间索引改变(其实这里用不着,不过以防万一
-    String api = "updateCardDetail/${cardDetailModel.key}";
+    String api = "cardDetail";
     //先更新本地列表
     assert(_cardList[index].key == cardDetailModel.key);
     _cardList[index].front = cardDetailModel.front;
     _cardList[index].back = cardDetailModel.back;
     //再更新数据库
     Map<String, dynamic> cardDetailJson = cardDetailModel.outlineToJson();
-    String body = json.encode(cardDetailJson);
-    return httpService.put(api, body: body).then((data) {
+    var requestBody = DataRequestModel(
+        userId, password, additionalData: cardDetailJson);
+    return httpService.put(api, body: requestBody).then((data) {
       if (data.statusCode == 200) {
         print('update detail Successfully');
       } else {
@@ -101,8 +107,12 @@ class CardService {
     });
   }
 
+  //删除指定卡片
   Future<void> _deleteDBCard(String key) {
-    String api = "deleteCard/$key";
+    String api = "card";
+    Map<String, dynamic> params = {"key": key};
+    var requestBody = DataRequestModel(
+        userId, password, additionalData: params);
     return httpService.delete(api).then((data) {
       if (data.statusCode == 200) {
         print('delete Successfully');

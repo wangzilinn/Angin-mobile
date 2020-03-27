@@ -6,7 +6,7 @@ import 'package:word_front_end/services/application/user_service.dart';
 import 'package:word_front_end/services/platform/http_service.dart';
 import 'package:word_front_end/services/platform/mqtt_serivice.dart';
 import 'package:word_front_end/services/platform/storage_service.dart';
-import 'package:word_front_end/views/navigation/navigation_view.dart';
+import 'package:word_front_end/views/login/login_view.dart';
 
 void setupLocator() async {
   GetIt.I.registerLazySingleton(() => StorageService());
@@ -33,6 +33,6 @@ class MyApp extends StatelessWidget {
           primaryColor: configService.settings["colors"][0],
           primaryColorLight: configService.settings["colors"][1],
         ),
-        home: NavigationView());
+        home: LogInView());
   }
 }

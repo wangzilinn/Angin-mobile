@@ -8,7 +8,7 @@ import 'package:word_front_end/services/platform/storage_service.dart';
 class UserService {
   static const CONFIG_FILE_NAME = "config";
 
-  Map<String, dynamic> _data;
+  Map<String, dynamic> _data = Map();
 
   StorageService get storageService => GetIt.I<StorageService>();
 
