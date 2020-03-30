@@ -36,7 +36,7 @@ class ChatService {
   }
 
   Future<DataResponseModel<List<MessageModel>>> _getHistoryMessage() {
-    String api = "getHistory";
+    String api = "/chat/getHistory";
     return httpService.get(api).then((data) {
       if (data.statusCode == 200) {
         var utf8decoder = new Utf8Decoder();
@@ -107,9 +107,8 @@ class ChatService {
   }
 
   Future<DataResponseModel<List<String>>> _fetchUserChannel() {
-    String api = "userChannelList";
-    DataRequestModel requestDataModel =
-    DataRequestModel(selfId, password);
+    String api = "/chat/userChannelList";
+    DataRequestModel requestDataModel = DataRequestModel(selfId, password);
     return httpService
         .post(api, body: requestDataModel.toString())
         .then((data) {

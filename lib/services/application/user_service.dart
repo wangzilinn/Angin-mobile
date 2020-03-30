@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:word_front_end/models/data_response_model.dart';
+import 'package:word_front_end/services/platform/http_service.dart';
 import 'package:word_front_end/services/platform/storage_service.dart';
 
 class UserService {
@@ -11,6 +13,8 @@ class UserService {
   Map<String, dynamic> _data = Map();
 
   StorageService get storageService => GetIt.I<StorageService>();
+
+  HttpService get httpService => GetIt.I<HttpService>();
 
   UserService() {
     //启动时先放入默认值, 如果本地有则覆盖
@@ -30,6 +34,25 @@ class UserService {
     _data["maxReciteCardNumber"] = 10;
     _data["maxNewCardNumber"] = 10;
     _data["deadline"] = new TimeOfDay.now();
+  }
+
+  Future<DataResponseModel<void>> signIn(String userId, String password) {
+    userId = _data["userId"];
+    //for test
+    password = _data["password"];
+    String api = "/auth/signIn";
+    Map request = {"userId": userId, "password": password};
+    return httpService.post(api, headers: request).then((data) {
+      if (data.statusCode == 200) {
+        String token = data.body;
+        print(token);
+        _data["token"] = token;
+        return DataResponseModel<void>();
+      } else {
+        print(data);
+        return DataResponseModel<void>(error: true, errorMessage: "用户名或密码错误");
+      }
+    });
   }
 
   void updateSetting(String key, Object value, {bool writeToLocal = true}) {

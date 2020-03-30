@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:word_front_end/animation/fade_animation.dart';
+import 'package:word_front_end/models/data_response_model.dart';
+import 'package:word_front_end/services/application/user_service.dart';
 import 'package:word_front_end/views/navigation/navigation_view.dart';
 
 class LogInView extends StatefulWidget {
@@ -11,6 +14,8 @@ class _LogInViewState extends State<LogInView> {
   String welcomeText = "Welcome back\nBaby!";
 
   final passwordController = TextEditingController();
+
+  UserService get userService => GetIt.I<UserService>();
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +148,7 @@ class _LogInViewState extends State<LogInView> {
                           onPressed: () => clickLoginButton(context),
                           child: Center(
                             child: Text(
-                              "Login",
+                              "Sign in",
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
@@ -181,11 +186,20 @@ class _LogInViewState extends State<LogInView> {
     cnt++;
   }
 
-  void clickLoginButton(context) {
-    print('login');
-    print(passwordController.text);
+  void clickLoginButton(context) async {
+    print('Signin');
+    String password = passwordController.text;
+    print(password);
+    DataResponseModel response = await userService.signIn(
+        "wangzilin", password);
+    if (!response.error) {
+      print("sign in successfully");
+    } else {
+      print("sign in failed");
+    }
     Navigator.of(context).pop();
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => NavigationView()));
   }
+
 }

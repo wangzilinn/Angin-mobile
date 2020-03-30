@@ -17,29 +17,37 @@ class HttpService {
     ..badCertificateCallback = _certificateCheck;
   var _client = IOClient(ioClient);
 
-  get url => HOST + ":" + PORT + "/";
+  get url => HOST + ":" + PORT;
 
-  Future<Response> get(dynamic api, {Map<String, String> headers}) {
+  Future<Response> get(String api, {Map<String, String> headers}) {
     if (headers == null) headers = header;
-    return _client.get(url + api, headers: header);
+    return _client.get(url + _checkApi(api), headers: header);
   }
 
-  Future<Response> post(dynamic api,
+  Future<Response> post(String api,
       {Map<String, String> headers, body, Encoding encoding}) {
     if (headers == null) headers = header;
-    return _client.post(url + api,
+    return _client.post(url + _checkApi(api),
         headers: headers, body: body, encoding: encoding);
   }
 
-  Future<Response> put(dynamic api,
+  Future<Response> put(String api,
       {Map<String, String> headers, body, Encoding encoding}) {
     if (headers == null) headers = header;
-    return _client.put(url + api,
+    return _client.put(url + _checkApi(api),
         headers: headers, body: body, encoding: encoding);
   }
 
-  Future<Response> delete(dynamic api, {Map<String, String> headers}) {
+  Future<Response> delete(String api, {Map<String, String> headers}) {
     if (headers == null) headers = header;
-    return _client.delete(url + api, headers: headers);
+    return _client.delete(url + _checkApi(api), headers: headers);
+  }
+
+  String _checkApi(String api) {
+    if (!api.startsWith("/")) {
+      return "/" + api;
+    } else {
+      return api;
+    }
   }
 }

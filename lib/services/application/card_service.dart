@@ -36,7 +36,7 @@ class CardService {
   //从网络获得今日背单词列表
   Future<DataResponseModel<List<CardDetailModel>>> _getDBCardList(
       {@required int reciteCardNumber, @required int newCardNumber}) {
-    String api = "todayCards";
+    String api = "/card/todayCards";
     Map params = {"expiredLimit": reciteCardNumber, "newLimit": newCardNumber};
     var requestBody =
         DataRequestModel(userId, password, additionalData: params);
@@ -60,7 +60,7 @@ class CardService {
   //更新卡片状态
   Future<void> updateDBCardStatus(String key, String option) {
     var index = _currentCardIndex; //先获得索引, 防止异步函数等待回调期间索引改变
-    String api = "cardStatus";
+    String api = "/card/cardStatus";
     Map params = {"key": key, "status": option};
     var requestBody = DataRequestModel(
         userId, password, additionalData: params);
@@ -89,7 +89,7 @@ class CardService {
   //更新卡片内容
   Future<void> updateCardDetails(CardDetailModel cardDetailModel) {
     var index = _currentCardIndex; //先获得索引, 防止异步函数等待回调期间索引改变(其实这里用不着,不过以防万一
-    String api = "cardDetail";
+    String api = "/card/cardDetail";
     //先更新本地列表
     assert(_cardList[index].key == cardDetailModel.key);
     _cardList[index].front = cardDetailModel.front;
@@ -109,7 +109,7 @@ class CardService {
 
   //删除指定卡片
   Future<void> _deleteDBCard(String key) {
-    String api = "card";
+    String api = "/card";
     Map<String, dynamic> params = {"key": key};
     var requestBody = DataRequestModel(
         userId, password, additionalData: params);
